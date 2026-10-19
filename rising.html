@@ -1,0 +1,1310 @@
+<title>RISING</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Spectral:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@400;500&display=swap">
+<style>
+/* Layout: a single centered column over a sky that moves from night to dawn as the ritual advances; embers rise behind it. */
+:root {
+  --night: #0e0b1c;
+  --dusk: #261733;
+  --ember: #ff7b3e;
+  --gold: #f4c46a;
+  --bone: #f4ede3;
+  --ash: #a99fbb;
+  --line: rgba(244, 237, 227, 0.16);
+  --field: rgba(244, 237, 227, 0.06);
+  --display: "Marcellus", "Trajan Pro", Georgia, serif;
+  --body: "Spectral", Georgia, "Times New Roman", serif;
+  --label: "Jost", "Futura", "Segoe UI", system-ui, sans-serif;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body {
+  background: var(--night);
+  color: var(--bone);
+  font-family: var(--body);
+  font-size: 18px;
+  line-height: 1.6;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Sky */
+.sky, .sky > div, #embers { position: fixed; inset: 0; pointer-events: none; }
+.sky .base { background: radial-gradient(120% 80% at 50% 110%, var(--dusk) 0%, var(--night) 60%); }
+.sky .dawn {
+  background:
+    radial-gradient(90% 55% at 50% 108%, #ffb26b 0%, rgba(255,140,72,0.85) 22%, rgba(196,86,106,0.55) 48%, rgba(59,37,80,0) 78%),
+    linear-gradient(to top, #6a2f4f 0%, #34204a 55%, #15102a 100%);
+  opacity: var(--p, 0);
+  transition: opacity 2.4s ease;
+}
+#embers { width: 100%; height: 100%; }
+
+/* App frame */
+.app {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-inline: 20px;
+  overflow-y: auto;
+}
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding-block: 18px 6px;
+  width: 100%;
+  max-width: 40rem;
+  margin-inline: auto;
+}
+.wordmark {
+  font-family: var(--display);
+  letter-spacing: 0.42em;
+  font-size: 0.8rem;
+  color: var(--gold);
+  background: none;
+  border: none;
+  padding: 6px 0;
+}
+.stage {
+  flex: 1;
+  width: 100%;
+  max-width: 36rem;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 22px;
+  padding-block: 24px 40px;
+  min-width: 0;
+}
+.scene { display: flex; flex-direction: column; gap: 22px; animation: rise 0.9s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+.eyebrow {
+  font-family: var(--label);
+  font-size: 0.72rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+h1, h2 { font-family: var(--display); font-weight: 400; margin: 0; text-wrap: balance; line-height: 1.15; }
+h1 { font-size: clamp(2.4rem, 8vw, 3.6rem); letter-spacing: 0.06em; }
+h2 { font-size: clamp(1.7rem, 5.5vw, 2.4rem); }
+p { margin: 0; }
+.lede { color: var(--ash); font-size: 1.05rem; max-width: 34rem; }
+.quote {
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(1.15rem, 3.6vw, 1.35rem);
+  line-height: 1.55;
+  border-left: 1px solid var(--gold);
+  padding-left: 18px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.cry {
+  font-family: var(--display);
+  font-size: clamp(2rem, 8vw, 3.2rem);
+  line-height: 1.1;
+  color: #fff4e2;
+  text-shadow: 0 0 30px rgba(255,170,90,0.5);
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+.big-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.big-list li {
+  font-family: var(--display);
+  font-size: clamp(1.3rem, 4.4vw, 1.75rem);
+  line-height: 1.25;
+  opacity: 0;
+  animation: rise 1s ease both;
+  overflow-wrap: anywhere;
+}
+.big-list.small li { font-family: var(--body); font-size: 1.08rem; font-style: italic; }
+.big-list li::before { content: "✦"; color: var(--ember); font-size: 0.7em; margin-right: 14px; vertical-align: 0.15em; }
+
+/* Controls */
+.actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+button { font: inherit; color: inherit; cursor: pointer; }
+.btn {
+  font-family: var(--label);
+  font-size: 0.82rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 15px 26px;
+  border-radius: 999px;
+  border: 1px solid var(--gold);
+  background: linear-gradient(180deg, rgba(244,196,106,0.18), rgba(255,123,62,0.12));
+  color: var(--bone);
+  transition: background 0.3s, transform 0.2s, opacity 0.3s;
+}
+.btn:hover { background: linear-gradient(180deg, rgba(244,196,106,0.32), rgba(255,123,62,0.22)); }
+.btn:active { transform: scale(0.98); }
+.btn:disabled { opacity: 0.35; cursor: default; }
+.ghost {
+  font-family: var(--label);
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  background: none;
+  border: none;
+  color: var(--ash);
+  padding: 10px 4px;
+}
+.ghost:hover { color: var(--bone); }
+.pill {
+  font-family: var(--label);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--field);
+  color: var(--bone);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.pill:hover { border-color: var(--gold); }
+.pill.rec { border-color: var(--ember); color: #ffd2b8; }
+.pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ember); }
+.pill.rec .dot { animation: blink 1s steps(2) infinite; }
+@keyframes blink { 50% { opacity: 0.2; } }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; border-radius: 6px; }
+
+input[type="text"], textarea {
+  width: 100%;
+  font: inherit;
+  font-size: 1.1rem;
+  color: var(--bone);
+  background: var(--field);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 16px;
+  resize: vertical;
+  box-sizing: border-box;
+}
+textarea { min-height: 8.5rem; line-height: 1.55; }
+textarea.tall { min-height: 12rem; }
+input::placeholder, textarea::placeholder { color: rgba(169,159,187,0.6); font-style: italic; }
+input:focus, textarea:focus { outline: none; border-color: var(--gold); background: rgba(244,237,227,0.09); }
+
+.meter { display: flex; gap: 6px; }
+.meter span { height: 2px; flex: 1; background: var(--line); border-radius: 2px; transition: background 0.5s; }
+.meter span.on { background: var(--gold); }
+
+/* Voice field */
+.voice { display: flex; flex-direction: column; gap: 10px; }
+.voice-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.voice-status { font-family: var(--label); font-size: 0.8rem; letter-spacing: 0.04em; color: var(--ash); }
+.voice audio, .letter-card audio { width: 100%; max-width: 100%; height: 40px; }
+
+/* The ember (hold to rise) */
+.ember-wrap { display: grid; place-items: center; padding-block: 4px; }
+.ember {
+  position: relative;
+  width: 210px; height: 210px;
+  max-width: 62vw; max-height: 62vw;
+  border-radius: 50%;
+  border: none;
+  background: none;
+  padding: 0;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.ember .core {
+  position: absolute; inset: 22%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 58%, #fff3d6 0%, var(--gold) 18%, var(--ember) 45%, rgba(196,60,40,0.85) 70%, rgba(120,30,40,0) 100%);
+  box-shadow: 0 0 60px 10px rgba(255,123,62,0.45), 0 0 140px 40px rgba(255,123,62,0.15);
+  animation: smolder 4.2s ease-in-out infinite;
+  transition: transform 0.25s ease-out;
+  transform: scale(calc(1 + var(--h, 0) * 0.45));
+}
+@keyframes smolder { 0%,100% { filter: brightness(0.85); } 50% { filter: brightness(1.15); } }
+.ember svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+.ember circle { fill: none; stroke-width: 1.5; }
+.ember .track { stroke: var(--line); }
+.ember .ring { stroke: var(--gold); stroke-linecap: round; transition: stroke-dashoffset 0.1s linear; }
+.hold-label { text-align: center; display: flex; flex-direction: column; gap: 6px; }
+.hold-label strong { font-family: var(--label); font-weight: 500; letter-spacing: 0.3em; text-transform: uppercase; font-size: 0.85rem; }
+.hold-label span { color: var(--ash); font-style: italic; }
+
+/* Mode picker */
+.modes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 26rem; margin-inline: auto; }
+.mode {
+  display: flex; flex-direction: column; gap: 2px; align-items: center;
+  padding: 12px 10px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--field);
+  color: var(--ash);
+  transition: border-color 0.3s, background 0.3s, color 0.3s;
+}
+.mode strong { font-family: var(--label); font-weight: 500; font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase; }
+.mode span { font-style: italic; font-size: 0.92rem; }
+.mode[aria-checked="true"] { border-color: var(--gold); color: var(--bone); background: rgba(244,196,106,0.1); }
+.mode:hover { color: var(--bone); }
+
+/* Vow follow-up */
+.followup {
+  width: 100%;
+  max-width: 26rem;
+  margin-inline: auto;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 18px;
+  border: 1px solid rgba(244,196,106,0.4);
+  border-radius: 16px;
+  background: rgba(244,196,106,0.07);
+  text-align: left;
+}
+.followup p { overflow-wrap: anywhere; }
+.followup .actions { justify-content: flex-start; }
+
+/* Breath */
+.breath { display: grid; place-items: center; height: 230px; }
+.breath .orb {
+  width: 90px; height: 90px; border-radius: 50%;
+  background: radial-gradient(circle, #fff1d0 0%, var(--gold) 30%, var(--ember) 60%, rgba(255,123,62,0) 100%);
+  box-shadow: 0 0 80px 20px rgba(255,123,62,0.3);
+  transform: scale(var(--s, 1));
+  transition: transform 4s ease-in-out;
+}
+.breath-cue { text-align: center; font-family: var(--label); letter-spacing: 0.4em; text-transform: uppercase; font-size: 0.85rem; color: var(--gold); min-height: 1.4em; }
+
+.center { text-align: center; align-items: center; }
+.center .actions { justify-content: center; }
+.risen-title { font-size: clamp(3rem, 12vw, 5rem); letter-spacing: 0.22em; color: #fff4e2; text-shadow: 0 0 40px rgba(255,170,90,0.6); }
+.notice {
+  font-family: var(--label);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--gold);
+  border: 1px dashed rgba(244,196,106,0.45);
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+.fine { font-family: var(--label); font-size: 0.75rem; letter-spacing: 0.06em; color: var(--ash); }
+
+/* Saga and letters */
+.saga { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.saga li { display: grid; grid-template-columns: 4.2rem 1fr; gap: 14px; padding-block: 18px; border-top: 1px solid var(--line); }
+.saga .num { font-family: var(--display); font-size: 1.5rem; color: var(--gold); line-height: 1.2; }
+.saga .body { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.saga .date { font-family: var(--label); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ash); }
+.saga .vow { font-size: 1.08rem; overflow-wrap: anywhere; }
+.saga .dim { color: var(--ash); font-style: italic; font-size: 0.95rem; overflow-wrap: anywhere; }
+.chip {
+  align-self: flex-start;
+  font-family: var(--label);
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--ash);
+}
+.chip.carried { border-color: var(--gold); color: var(--gold); }
+.letters { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.letter-card { display: flex; flex-direction: column; gap: 8px; padding-block: 18px; border-top: 1px solid var(--line); min-width: 0; }
+.letter-card p { white-space: pre-wrap; overflow-wrap: anywhere; font-style: italic; font-weight: 300; }
+.letter-card .clip { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+  .scene, .big-list li { animation: none; opacity: 1; }
+  .ember .core { animation: none; }
+  .breath .orb { transition: none; }
+}
+</style>
+
+<div class="sky"><div class="base"></div><div class="dawn"></div></div>
+<canvas id="embers" aria-hidden="true"></canvas>
+
+<div class="app" id="appScroll">
+  <header class="topbar">
+    <button class="wordmark" id="homeBtn" type="button" aria-label="Back to the ember">RISING</button>
+    <button class="ghost" id="soundBtn" type="button" aria-pressed="true">Sound on</button>
+  </header>
+  <main class="stage" id="stage" aria-live="polite"></main>
+</div>
+
+<script>
+(() => {
+  // ================= state =================
+  // One state object: myth, letters, saga. Saved in this browser right away,
+  // and synced to the viewer's own Claude account when the page runs as an artifact.
+  const KEY = "rising.state.v2";
+  const PREFS = "rising.prefs";
+  const FOLLOW_MS = 10 * 60 * 1000; // ask "did the fire carry?" once a chapter is 10+ minutes old
+  const ls = {
+    get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+  };
+  const uid = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+
+  function normalize(s) {
+    s = s && typeof s === "object" ? s : {};
+    return {
+      myth: s.myth && typeof s.myth === "object" ? s.myth : null,
+      letters: Array.isArray(s.letters) ? s.letters : [],
+      saga: Array.isArray(s.saga) ? s.saga : [],
+      sample: !!s.sample,
+      updatedAt: s.updatedAt || 0,
+    };
+  }
+  function loadState() {
+    let s = ls.get(KEY, null);
+    if (!s) {
+      // migrate the first prototype's keys
+      const myth = ls.get("rising.myth", null);
+      s = { myth, saga: ls.get("rising.saga", []), sample: ls.get("rising.sample", false), letters: [] };
+    }
+    s = normalize(s);
+    if (s.myth && s.myth.letter) {
+      if (!s.letters.length) s.letters.push({ id: uid("l"), at: s.myth.forgedAt || Date.now(), text: s.myth.letter, voice: false, shown: 0 });
+      delete s.myth.letter;
+    }
+    s.saga.forEach(c => { if (!c.mode) c.mode = "fading"; });
+    return s;
+  }
+  let S = loadState();
+  const prefs = Object.assign({ mode: "fading", sound: true }, ls.get(PREFS, {}));
+  const savePrefs = () => ls.set(PREFS, prefs);
+
+  function save() {
+    S.updatedAt = Date.now();
+    ls.set(KEY, S);
+    sync.schedule();
+  }
+
+  // ================= account sync (artifact only) =================
+  const sync = (() => {
+    let ref = null, timer = 0, busy = false, again = false;
+    const api = { status: "local", onPulled: null };
+    async function push() {
+      if (!ref) return;
+      if (busy) { again = true; return; }
+      busy = true;
+      try { await ref.set({ updatedAt: S.updatedAt, state: JSON.parse(JSON.stringify(S)) }); api.status = "synced"; }
+      catch (e) { if (e && (e.code === "invalid_argument" || e.code === "revoked" || e.code === "not_granted")) { ref = null; api.status = "local"; } }
+      busy = false;
+      if (again) { again = false; push(); }
+    }
+    api.schedule = () => { if (!ref) return; clearTimeout(timer); timer = setTimeout(push, 700); };
+    api.init = async () => {
+      try {
+        if (!window.claude || typeof window.claude.use !== "function") return;
+        const [db, user] = await Promise.all([window.claude.use("db"), window.claude.use("user")]);
+        if (!db || !user) return;
+        const id = await user.id();
+        if (!id) return;
+        ref = db.doc("data/users/" + id + "/rising");
+        const snap = await ref.get();
+        const remote = snap.exists ? snap.data() : null;
+        if (remote && remote.state && (remote.updatedAt || 0) > (S.updatedAt || 0)) {
+          S = normalize(JSON.parse(JSON.stringify(remote.state)));
+          S.updatedAt = remote.updatedAt;
+          ls.set(KEY, S);
+          api.status = "synced";
+          api.onPulled && api.onPulled();
+        } else if (S.myth || S.saga.length || S.letters.length) {
+          await push();
+        } else {
+          api.status = "synced";
+        }
+      } catch { /* stay local */ }
+    };
+    return api;
+  })();
+
+  // ================= voice storage (this device) =================
+  const voiceDB = (() => {
+    let dbp = null;
+    const open = () => dbp || (dbp = new Promise((res, rej) => {
+      try {
+        const r = indexedDB.open("rising-voice", 1);
+        r.onupgradeneeded = () => r.result.createObjectStore("clips");
+        r.onsuccess = () => res(r.result);
+        r.onerror = () => rej(r.error);
+      } catch (e) { rej(e); }
+    }));
+    const tx = async (mode, fn) => {
+      const db = await open();
+      return new Promise((res, rej) => {
+        const t = db.transaction("clips", mode); const st = t.objectStore("clips");
+        const r = fn(st); t.oncomplete = () => res(r && r.result); t.onerror = () => rej(t.error);
+      });
+    };
+    return {
+      put: (id, blob) => tx("readwrite", st => st.put(blob, id)).catch(() => null),
+      get: id => tx("readonly", st => st.get(id)).catch(() => null),
+      del: id => tx("readwrite", st => st.delete(id)).catch(() => null),
+    };
+  })();
+
+  // ================= content =================
+  const SAMPLE = {
+    name: "Rowan",
+    toward: "A body that feels like armor\nShipping the game I keep sketching\nMornings that belong to me",
+    future: "Up before the sun without an alarm. Calm in my chest. The game is out and people are playing it. I move like someone who keeps their promises.",
+    origin: "I've rebuilt myself from zero before. The year everything fell apart, I still showed up, and I came out sharper.",
+    victory: "Three a.m., the build finally running, music loud, hands moving faster than thought. I wasn't trying. I was just in it.",
+    carry: "My mom\nMy younger brother\nThe kid I used to be",
+    ancestors: "My grandfather, who crossed an ocean with nothing\nMy mother's stubbornness\nEvery teacher who didn't give up on me",
+    gratitude: "The friends who'd pick up at 2am\nA body that still moves\nThis exact window and its light",
+    shadow: "The scroll",
+  };
+  const SAMPLE_LETTER = "Hey. If you're reading this, you're tired and you think the fire's gone. It isn't. You've just been spending it without feeding it.\n\nYou don't have to win today. You just have to take one step that the real you would take. Then another.\n\nI'm proud of you for opening this instead of disappearing. That's the whole thing. That's the rise.";
+
+  const FORGE = [
+    { key: "name", q: "What does your saga call you?", hint: "Your name, or the name you'd give your hero.", type: "line", ph: "Name" },
+    { key: "toward", q: "What are you rising toward?", hint: "The things you want with your whole chest. One per line.", type: "text", ph: "A body that feels like armor\nThe work I was made for" },
+    { key: "future", q: "Describe the you who made it.", hint: "Picture yourself a few years out, fully alive. What does a day look like? How do you carry yourself?", type: "text", ph: "I wake up and…" },
+    { key: "origin", q: "Where did you come from?", hint: "What have you already survived to be standing here?", type: "text", ph: "The year I…" },
+    { key: "victory", q: "When were you unstoppable?", hint: "One moment you were fully alive. Describe it like you're back there.", type: "text", ph: "I remember…" },
+    { key: "carry", q: "Who do you carry?", hint: "The people you rise for, living or gone. One per line.", type: "text", ph: "My mother\nThe kid I used to be" },
+    { key: "ancestors", q: "Who stands behind you?", hint: "The ones whose strength runs in you: family, lineage, teachers, heroes. One per line.", type: "text", ph: "My grandmother, who…" },
+    { key: "gratitude", q: "What in your life now would you hate to lose?", hint: "Small or huge. One per line.", type: "text", ph: "Morning light in the kitchen" },
+    { key: "shadow", q: "Name your shadow.", hint: "The pattern that pulls you under when you start to fade. Naming it takes its mask off.", type: "line", ph: "The scroll, the 'just one more'…" },
+    { key: "letter", q: "Write to yourself on the day you fade.", hint: "Right now you have fire. The future you reading this won't. Tell them what they need to hear, in writing, in your own voice, or both.", type: "letter" },
+  ];
+
+  // ================= helpers =================
+  const $stage = document.getElementById("stage");
+  const $scroll = document.getElementById("appScroll");
+  const root = document.documentElement;
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const lines = s => String(s || "").split("\n").map(x => x.trim()).filter(Boolean);
+  const roman = n => { const m = [[1000,"M"],[900,"CM"],[500,"D"],[400,"CD"],[100,"C"],[90,"XC"],[50,"L"],[40,"XL"],[10,"X"],[9,"IX"],[5,"V"],[4,"IV"],[1,"I"]]; let r = ""; for (const [v, s] of m) while (n >= v) { r += s; n -= v; } return r || "0"; };
+  const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const fmtDate = d => new Date(d).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" });
+  const fmtShort = d => new Date(d).toLocaleDateString(undefined, { month: "long", day: "numeric" });
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const listItems = (arr, cls = "") => `<ul class="big-list ${cls}">${arr.map((x, i) => `<li style="animation-delay:${0.4 + i * 0.9}s">${esc(x)}</li>`).join("")}</ul>`;
+  let timers = [];
+  const later = (fn, ms) => timers.push(setTimeout(fn, ms));
+  const clearTimers = () => { timers.forEach(clearTimeout); timers = []; };
+  let view = "home";
+  let cleanup = [];
+
+  function setDawn(p) { root.style.setProperty("--p", p.toFixed(3)); embers.intensity = 0.25 + p * 1.6; audio.dawn(p); }
+  function render(html, after, name = "scene") {
+    clearTimers();
+    cleanup.forEach(fn => { try { fn(); } catch {} }); cleanup = [];
+    view = name;
+    $stage.innerHTML = `<section class="scene">${html}</section>`;
+    $scroll.scrollTop = 0;
+    after && after($stage.firstElementChild);
+    const f = $stage.querySelector("[autofocus]");
+    if (f) setTimeout(() => f.focus({ preventScroll: true }), 350);
+  }
+  const vibrate = p => { try { navigator.vibrate && navigator.vibrate(p); } catch {} };
+
+  // keep the screen awake during a ritual
+  const wake = (() => {
+    let lock = null;
+    return {
+      async on() { try { if (!lock && navigator.wakeLock) { lock = await navigator.wakeLock.request("screen"); lock.addEventListener("release", () => { lock = null; }); } } catch {} },
+      off() { try { lock && lock.release(); } catch {} lock = null; },
+    };
+  })();
+
+  // ================= embers canvas =================
+  const embers = (() => {
+    const c = document.getElementById("embers"), ctx = c.getContext("2d");
+    let w, h, dpr, parts = [];
+    const api = { intensity: 0.25, burst(n = 60) { for (let i = 0; i < n; i++) parts.push(spawn(true)); } };
+    function size() { dpr = Math.min(devicePixelRatio || 1, 2); w = c.width = innerWidth * dpr; h = c.height = innerHeight * dpr; }
+    function spawn(burst) {
+      if (burst) {
+        const a = Math.random() * Math.PI * 2, sp = (Math.random() * 2.2 + 0.6) * dpr, r0 = Math.random() * 40 * dpr;
+        return { x: w / 2 + Math.cos(a) * r0, y: h * 0.45 + Math.sin(a) * r0,
+          r: (Math.random() * 1.8 + 0.6) * dpr, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 1.2 * dpr,
+          life: 1, decay: Math.random() * 0.006 + 0.004, hue: 18 + Math.random() * 28 };
+      }
+      return { x: Math.random() * w, y: h + 10,
+        r: (Math.random() * 1.8 + 0.6) * dpr, vy: -(Math.random() * 0.6 + 0.3) * dpr,
+        vx: (Math.random() - 0.5) * 0.3 * dpr, life: 1, decay: Math.random() * 0.004 + 0.002, hue: 18 + Math.random() * 28 };
+    }
+    function tick() {
+      ctx.clearRect(0, 0, w, h);
+      if (!reduced && Math.random() < 0.18 * api.intensity) parts.push(spawn(false));
+      ctx.globalCompositeOperation = "lighter";
+      parts = parts.filter(p => p.life > 0 && p.y > -20);
+      for (const p of parts) {
+        p.x += p.vx + Math.sin((p.y + p.r * 40) / (60 * dpr)) * 0.25 * dpr; p.y += p.vy; p.life -= p.decay;
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
+        g.addColorStop(0, `hsla(${p.hue},100%,70%,${p.life})`); g.addColorStop(1, `hsla(${p.hue},100%,50%,0)`);
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2); ctx.fill();
+      }
+      requestAnimationFrame(tick);
+    }
+    addEventListener("resize", size); size(); tick();
+    return api;
+  })();
+
+  // ================= sound =================
+  // A drone that brightens with the dawn, a fire crackle while you hold the ember,
+  // an ignition swell, and a chord when you finish. Starts on your first touch.
+  const audio = (() => {
+    let ctx = null, master, droneGain, droneFilter, crackleGain, duckGain;
+    let level = 0;
+    const btn = document.getElementById("soundBtn");
+    const sync = () => { btn.textContent = prefs.sound ? "Sound on" : "Sound off"; btn.setAttribute("aria-pressed", String(prefs.sound)); };
+    function build() {
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      master = ctx.createGain(); master.gain.value = prefs.sound ? 1 : 0;
+      duckGain = ctx.createGain(); duckGain.gain.value = 1;
+      duckGain.connect(master).connect(ctx.destination);
+      // drone
+      droneFilter = ctx.createBiquadFilter(); droneFilter.type = "lowpass"; droneFilter.frequency.value = 420;
+      droneGain = ctx.createGain(); droneGain.gain.value = 0;
+      [[73.4, 0, "sine", 0.22], [110, 4, "sine", 0.2], [146.8, -6, "sine", 0.16], [220, 3, "triangle", 0.07], [329.6, 5, "sine", 0.04]].forEach(([f, d, t, g]) => {
+        const o = ctx.createOscillator(); o.type = t; o.frequency.value = f; o.detune.value = d;
+        const gg = ctx.createGain(); gg.gain.value = g; o.connect(gg).connect(droneFilter); o.start();
+      });
+      droneFilter.connect(droneGain).connect(duckGain);
+      // crackle: a looped buffer of sparse, decaying pops
+      const len = ctx.sampleRate * 3, buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) {
+        if (Math.random() < 0.0009) {
+          const amp = Math.random() * 0.9 + 0.1, dur = Math.floor(ctx.sampleRate * (0.002 + Math.random() * 0.012));
+          for (let j = 0; j < dur && i + j < len; j++) d[i + j] += (Math.random() * 2 - 1) * amp * Math.pow(1 - j / dur, 3);
+        }
+        d[i] += (Math.random() * 2 - 1) * 0.012;
+      }
+      const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true;
+      const bp = ctx.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 2400; bp.Q.value = 0.7;
+      crackleGain = ctx.createGain(); crackleGain.gain.value = 0;
+      src.connect(bp).connect(crackleGain).connect(duckGain); src.start();
+    }
+    const api = {
+      start() {
+        try { if (!ctx) build(); ctx.resume(); api.dawn(level); } catch {}
+      },
+      dawn(p) {
+        level = p;
+        if (!ctx) return;
+        const t = ctx.currentTime;
+        droneGain.gain.setTargetAtTime(0.05 + p * 0.11, t, 1.2);
+        droneFilter.frequency.setTargetAtTime(420 + p * 1500, t, 1.5);
+      },
+      hold(h) { if (ctx) crackleGain.gain.setTargetAtTime(h * 0.55, ctx.currentTime, 0.08); },
+      breath(inhale) { if (ctx) droneFilter.frequency.setTargetAtTime(inhale ? 900 + level * 1500 : 380 + level * 1200, ctx.currentTime, inhale ? 1.4 : 2); },
+      chord(freqs, peak = 0.08, attack = 0.6, decay = 3.5) {
+        if (!ctx) return;
+        const t = ctx.currentTime, g = ctx.createGain();
+        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(peak, t + attack); g.gain.exponentialRampToValueAtTime(0.0001, t + attack + decay);
+        g.connect(duckGain);
+        freqs.forEach((f, i) => { const o = ctx.createOscillator(); o.type = i % 2 ? "triangle" : "sine"; o.frequency.value = f; o.connect(g); o.start(t); o.stop(t + attack + decay + 0.1); });
+      },
+      ignite() {
+        if (!ctx) return;
+        const t = ctx.currentTime;
+        // whoosh: noise through a rising lowpass
+        const len = ctx.sampleRate * 2, buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0);
+        for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+        const src = ctx.createBufferSource(); src.buffer = buf;
+        const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.setValueAtTime(180, t); lp.frequency.exponentialRampToValueAtTime(3800, t + 0.9);
+        const g = ctx.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.22, t + 0.25); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.8);
+        src.connect(lp).connect(g).connect(duckGain); src.start(t); src.stop(t + 2);
+        api.hold(0);
+        api.chord([110, 164.8, 220, 277.2, 329.6], 0.07, 0.5, 3.5);
+      },
+      risen() { api.chord([110, 220, 277.2, 329.6, 440, 554.4], 0.09, 0.9, 5); },
+      tap() { api.chord([440 * (Math.random() < 0.5 ? 1 : 1.5)], 0.015, 0.02, 0.6); },
+      duck(on) { if (ctx) duckGain.gain.setTargetAtTime(on ? 0.25 : 1, ctx.currentTime, 0.3); },
+    };
+    btn.addEventListener("click", () => {
+      prefs.sound = !prefs.sound; savePrefs(); sync();
+      if (prefs.sound) api.start();
+      if (master) master.gain.setTargetAtTime(prefs.sound ? 1 : 0, ctx.currentTime, 0.3);
+    });
+    sync();
+    return api;
+  })();
+  const touchStart = () => { if (prefs.sound) audio.start(); };
+
+  // ================= voice field =================
+  // Record in-app where the microphone is allowed; otherwise attach a voice memo file.
+  function voiceFieldHTML(idp) {
+    return `
+      <div class="voice" id="${idp}-voice">
+        <div class="voice-row">
+          <button type="button" class="pill" id="${idp}-rec" hidden><span class="dot"></span><span class="lbl">Record your voice</span></button>
+          <label class="pill" for="${idp}-file"><span class="dot"></span>Attach a voice memo</label>
+          <input type="file" id="${idp}-file" accept="audio/*" hidden>
+          <button type="button" class="ghost" id="${idp}-clear" hidden>Remove voice</button>
+        </div>
+        <audio id="${idp}-audio" controls hidden></audio>
+        <span class="voice-status" id="${idp}-status"></span>
+      </div>`;
+  }
+  function mountVoiceField(el, idp, initialBlob, onChange) {
+    const rec = el.querySelector(`#${idp}-rec`), file = el.querySelector(`#${idp}-file`), clear = el.querySelector(`#${idp}-clear`);
+    const player = el.querySelector(`#${idp}-audio`), status = el.querySelector(`#${idp}-status`);
+    let url = null, mr = null, stream = null, chunks = [], t0 = 0, tick = 0;
+    const show = blob => {
+      if (url) URL.revokeObjectURL(url);
+      url = blob ? URL.createObjectURL(blob) : null;
+      player.hidden = !blob; clear.hidden = !blob;
+      if (blob) player.src = url; else player.removeAttribute("src");
+      onChange(blob || null);
+    };
+    const canRecord = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
+    rec.hidden = !canRecord;
+    const stopAll = () => { try { mr && mr.state !== "inactive" && mr.stop(); } catch {} try { stream && stream.getTracks().forEach(t => t.stop()); } catch {} clearInterval(tick); };
+    cleanup.push(() => { stopAll(); if (url) URL.revokeObjectURL(url); });
+    rec.addEventListener("click", async () => {
+      if (mr && mr.state === "recording") { mr.stop(); return; }
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      } catch {
+        rec.hidden = true;
+        status.textContent = "Recording isn't allowed here. Record a voice memo on your phone and attach it instead.";
+        return;
+      }
+      chunks = [];
+      mr = new MediaRecorder(stream);
+      mr.ondataavailable = e => e.data.size && chunks.push(e.data);
+      mr.onstop = () => {
+        stream.getTracks().forEach(t => t.stop()); clearInterval(tick);
+        rec.classList.remove("rec"); rec.querySelector(".lbl").textContent = "Record again";
+        const blob = new Blob(chunks, { type: mr.mimeType || "audio/webm" });
+        status.textContent = "Recorded. Your voice will play when you need it.";
+        show(blob);
+      };
+      mr.start(); t0 = Date.now(); rec.classList.add("rec"); status.textContent = "";
+      const upd = () => { const s = Math.floor((Date.now() - t0) / 1000); rec.querySelector(".lbl").textContent = `Stop · ${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; };
+      upd(); tick = setInterval(upd, 500);
+    });
+    file.addEventListener("change", () => {
+      const f = file.files && file.files[0];
+      if (!f) return;
+      if (f.size > 25 * 1024 * 1024) { status.textContent = "That file is over 25 MB. Try a shorter memo."; return; }
+      status.textContent = `Attached ${f.name}.`;
+      show(f);
+      file.value = "";
+    });
+    clear.addEventListener("click", () => { status.textContent = ""; show(null); });
+    if (initialBlob) show(initialBlob);
+  }
+
+  async function addLetter(text, blob) {
+    text = (text || "").trim();
+    if (!text && !blob) return null;
+    const id = uid("l");
+    if (blob) await voiceDB.put(id, blob);
+    S.letters.push({ id, at: Date.now(), text, voice: !!blob, shown: 0 });
+    save();
+    return id;
+  }
+
+  // ================= derived from the saga =================
+  const fadingChapters = () => S.saga.filter(c => c.mode === "fading");
+  const carriedVows = () => S.saga.filter(c => c.outcome === "carried" && c.vow).slice(-3).reverse();
+  function chooseLetter() {
+    if (!S.letters.length) return null;
+    const sorted = S.letters.slice().sort((a, b) => (a.shown || 0) - (b.shown || 0));
+    return pick(sorted.slice(0, Math.min(2, sorted.length)));
+  }
+
+  // ================= home =================
+  let unkept = null; // a vow that didn't carry, folded into the next descent
+
+  function home() {
+    wake.off();
+    setDawn(0);
+    if (!S.myth) {
+      render(`
+        <p class="eyebrow">For the days the fire runs low</p>
+        <h1>Rise again.</h1>
+        <p class="lede">RISING isn't a tracker and it won't keep score. You open it when you feel yourself fading, and it hands your own fire back to you: your story, your people, your reasons, and your own voice from a stronger day.</p>
+        <p class="lede">First you forge your myth. It takes about five minutes, and it's best done on a day you feel strong.</p>
+        <div class="actions">
+          <button class="btn" id="forge" type="button">Forge my myth</button>
+          <button class="ghost" id="sample" type="button">Try with a sample myth</button>
+        </div>`, el => {
+        el.querySelector("#forge").onclick = () => forge(0, {});
+        el.querySelector("#sample").onclick = () => {
+          S.myth = { ...SAMPLE, forgedAt: Date.now() }; S.sample = true;
+          if (!S.letters.length) S.letters.push({ id: uid("l"), at: Date.now(), text: SAMPLE_LETTER, voice: false, shown: 0, sample: true });
+          save(); home();
+        };
+      }, "home");
+      return;
+    }
+    const m = S.myth, mode = prefs.mode, next = S.saga.length + 1;
+    const last = S.saga[S.saga.length - 1];
+    const ask = last && !last.outcome && last.vow && Date.now() - last.at > FOLLOW_MS ? last : null;
+    const sub = unkept
+      ? "Then let's rise. No guilt, just the next step."
+      : mode === "fading" ? `Chapter ${roman(next)} is waiting, ${esc(m.name || "wanderer")}.` : `You're burning, ${esc(m.name || "wanderer")}. Let's feed it.`;
+    render(`
+      ${S.sample ? `<p class="notice">You're using a sample myth. Forge your own when you're ready.</p>` : ""}
+      ${ask ? `
+        <div class="followup" id="followup">
+          <p class="eyebrow">Chapter ${roman(ask.n)} · ${esc(fmtShort(ask.at))}</p>
+          <p>${ask.mode === "rising" ? "Last time you said you'd feed the fire with" : "Last time you vowed"} <em>${esc(ask.vow)}</em>. Did the fire carry?</p>
+          <div class="actions">
+            <button class="btn" id="carried" type="button">It carried</button>
+            <button class="ghost" id="notyet" type="button">Not yet</button>
+          </div>
+        </div>` : ""}
+      <div class="modes" role="radiogroup" aria-label="How is your fire right now?">
+        <button type="button" role="radio" class="mode" data-mode="fading" aria-checked="${mode === "fading"}">
+          <strong>I'm fading</strong><span>Bring me back</span>
+        </button>
+        <button type="button" role="radio" class="mode" data-mode="rising" aria-checked="${mode === "rising"}">
+          <strong>I'm rising</strong><span>Keep the fire going</span>
+        </button>
+      </div>
+      <div class="ember-wrap">
+        <button class="ember" id="ember" type="button" aria-label="${mode === "fading" ? "Hold to rise" : "Hold to stoke"}">
+          <div class="core"></div>
+          <svg viewBox="0 0 100 100" aria-hidden="true"><circle class="track" cx="50" cy="50" r="48"/><circle class="ring" cx="50" cy="50" r="48" stroke-dasharray="301.6" stroke-dashoffset="301.6"/></svg>
+        </button>
+      </div>
+      <div class="hold-label">
+        <strong id="holdTxt">${mode === "fading" ? "Hold to rise" : "Hold to stoke"}</strong>
+        <span>${sub}</span>
+      </div>
+      <div class="actions" style="justify-content:center">
+        <button class="ghost" id="sagaBtn" type="button">Your saga${S.saga.length ? ` · ${S.saga.length}` : ""}</button>
+        <button class="ghost" id="lettersBtn" type="button">Letters${S.letters.length ? ` · ${S.letters.length}` : ""}</button>
+        <button class="ghost" id="reforge" type="button">${S.sample ? "Forge my own" : "Reforge"}</button>
+      </div>`, el => {
+      el.classList.add("center");
+      el.querySelector("#sagaBtn").onclick = sagaView;
+      el.querySelector("#lettersBtn").onclick = lettersView;
+      el.querySelector("#reforge").onclick = () => forge(0, S.sample ? {} : { ...S.myth });
+      el.querySelectorAll(".mode").forEach(b => b.onclick = () => {
+        if (b.dataset.mode === prefs.mode) return;
+        prefs.mode = b.dataset.mode; savePrefs(); unkept = null; home();
+      });
+      if (ask) {
+        const box = el.querySelector("#followup");
+        el.querySelector("#carried").onclick = () => {
+          touchStart();
+          ask.outcome = "carried"; save();
+          embers.burst(80); vibrate([20, 40, 60]); audio.chord([220, 277.2, 329.6, 440], 0.06, 0.3, 2.5);
+          box.innerHTML = `<p class="eyebrow">Chapter ${roman(ask.n)}</p><p>It carried. That goes in the saga as a fire you kept.</p>`;
+          setTimeout(() => { if (view === "home") home(); }, 2600);
+        };
+        el.querySelector("#notyet").onclick = () => {
+          ask.outcome = "not-yet"; save();
+          unkept = ask.vow; prefs.mode = "fading"; savePrefs();
+          home();
+        };
+      }
+      bindHold(el.querySelector("#ember"), el.querySelector(".ring"), el.querySelector("#holdTxt"));
+    }, "home");
+  }
+
+  function bindHold(btn, ring, txt) {
+    const DUR = 2200, LEN = 301.6, label = txt.textContent;
+    let t0 = 0, raf = 0, done = false, lastQ = 0;
+    const set = h => { ring.style.strokeDashoffset = LEN * (1 - h); btn.style.setProperty("--h", h); embers.intensity = 0.25 + h * 2.5; audio.hold(h); };
+    const step = now => {
+      const h = Math.min(1, (now - t0) / DUR); set(h);
+      const q = Math.floor(h * 4); if (q > lastQ) { lastQ = q; vibrate(12 + q * 6); }
+      if (h >= 1) {
+        done = true; txt.textContent = prefs.mode === "fading" ? "Rising" : "Stoking";
+        vibrate([30, 40, 90]); embers.burst(110); audio.ignite();
+        setTimeout(() => prefs.mode === "fading" ? beginRitual() : beginStoke(), 450);
+        return;
+      }
+      raf = requestAnimationFrame(step);
+    };
+    const down = e => { if (done) return; e.preventDefault(); touchStart(); t0 = performance.now(); lastQ = 0; txt.textContent = "Keep holding"; vibrate(15); raf = requestAnimationFrame(step); };
+    const up = () => { if (done) return; cancelAnimationFrame(raf); set(0); txt.textContent = label; };
+    btn.addEventListener("pointerdown", down);
+    ["pointerup", "pointerleave", "pointercancel"].forEach(ev => btn.addEventListener(ev, up));
+    btn.addEventListener("keydown", e => { if ((e.key === " " || e.key === "Enter") && !e.repeat) down(e); });
+    btn.addEventListener("keyup", e => { if (e.key === " " || e.key === "Enter") up(); });
+    btn.addEventListener("contextmenu", e => e.preventDefault());
+  }
+
+  // ================= forging =================
+  function forge(i, draft) {
+    setDawn(i / FORGE.length * 0.35);
+    const f = FORGE[i];
+    const reforging = !!S.myth && !S.sample;
+    const val = draft[f.key] || "";
+    const meter = FORGE.map((_, j) => `<span class="${j <= i ? "on" : ""}"></span>`).join("");
+    let field;
+    if (f.type === "line") field = `<input type="text" id="forge-${f.key}" value="${esc(val)}" placeholder="${esc(f.ph)}" autocomplete="off" autofocus>`;
+    else if (f.type === "letter") field = `<textarea id="forge-letter" class="tall" placeholder="Hey. If you're reading this…" autofocus>${esc(draft.letter || "")}</textarea>${voiceFieldHTML("fl")}`;
+    else field = `<textarea id="forge-${f.key}" placeholder="${esc(f.ph)}" autofocus>${esc(val)}</textarea>`;
+    const q = f.type === "letter" && reforging ? "Write another letter for the day you fade." : f.q;
+    const hint = f.type === "letter" && reforging ? `Your ${S.letters.length === 1 ? "first letter stays" : `${S.letters.length} letters stay`} in the library. This one is optional.` : f.hint;
+    render(`
+      <div class="meter" aria-hidden="true">${meter}</div>
+      <p class="eyebrow">The Forging · Rite ${roman(i + 1)} of ${roman(FORGE.length)}</p>
+      <h2>${esc(q)}</h2>
+      <p class="lede">${esc(hint)}</p>
+      ${field}
+      <div class="actions">
+        <button class="btn" id="next" type="button">${i === FORGE.length - 1 ? "Seal the myth" : "Continue"}</button>
+        <button class="ghost" id="back" type="button">${i > 0 ? "Back" : "Cancel"}</button>
+      </div>`, el => {
+      const input = el.querySelector(f.type === "letter" ? "#forge-letter" : `#forge-${f.key}`);
+      if (f.type === "letter") mountVoiceField(el, "fl", draft.letterBlob || null, b => { draft.letterBlob = b; });
+      const keep = () => { draft[f.key] = input.value.trim(); };
+      el.querySelector("#next").onclick = async () => {
+        keep();
+        if (i < FORGE.length - 1) return forge(i + 1, draft);
+        el.querySelector("#next").disabled = true;
+        const { letter, letterBlob, ...myth } = draft;
+        if (S.sample) { S.saga = []; S.letters = S.letters.filter(l => !l.sample); }
+        S.myth = { ...myth, forgedAt: (S.myth && !S.sample && S.myth.forgedAt) || Date.now() };
+        S.sample = false;
+        save();
+        await addLetter(letter, letterBlob);
+        sealed();
+      };
+      el.querySelector("#back").onclick = () => { keep(); i > 0 ? forge(i - 1, draft) : home(); };
+      if (f.type === "line") input.addEventListener("keydown", e => { if (e.key === "Enter") el.querySelector("#next").click(); });
+    }, "forge");
+  }
+
+  function sealed() {
+    setDawn(0.5); embers.burst(70); audio.chord([220, 329.6, 440], 0.05, 0.4, 3);
+    render(`
+      <p class="eyebrow">The Forging is complete</p>
+      <h2>Your myth is sealed.</h2>
+      <p class="lede">Close this and live. The next time you feel the fire running low, come back and hold the ember. Everything you gave today will be waiting.</p>
+      <div class="actions"><button class="btn" id="go" type="button">Return to the ember</button></div>`,
+      el => { el.querySelector("#go").onclick = home; });
+  }
+
+  // ================= shared scenes =================
+  function breathScene(eyebrow, title, cycles, cta) {
+    return { html: () => `
+      <p class="eyebrow">${esc(eyebrow)}</p>
+      <h2>${esc(title)}</h2>
+      <div class="breath"><div class="orb" id="orb"></div></div>
+      <p class="breath-cue" id="cue">&nbsp;</p>
+      <div class="actions"><button class="btn" data-next type="button">${esc(cta)}</button></div>`,
+      mount: el => {
+        const orb = el.querySelector("#orb"), cue = el.querySelector("#cue");
+        let n = 0;
+        const cycle = () => {
+          if (n++ >= cycles) { cue.textContent = "Good"; audio.breath(false); return; }
+          cue.textContent = "In"; orb.style.transitionDuration = "4s"; orb.style.setProperty("--s", 2.1);
+          vibrate([60, 120, 60]); audio.breath(true);
+          later(() => { cue.textContent = "Out"; orb.style.transitionDuration = "6s"; orb.style.setProperty("--s", 1); vibrate(25); audio.breath(false); later(cycle, 6000); }, 4000);
+        };
+        later(cycle, 500);
+      } };
+  }
+
+  function letterScene() {
+    const L = chooseLetter();
+    if (!L) return null;
+    return { html: () => `
+      <p class="eyebrow">A letter from you · ${esc(fmtDate(L.at))}</p>
+      <h2>${esc(S.myth.name ? S.myth.name + "," : "You,")}</h2>
+      <div class="actions" id="voiceRow" hidden><button class="pill" id="play" type="button"><span class="dot"></span><span class="lbl">Hear it in your voice</span></button></div>
+      <div id="letter" style="display:flex;flex-direction:column;gap:14px"></div>
+      <div class="actions"><button class="btn" data-next type="button">I hear you</button></div>`,
+      mount: el => {
+        L.shown = Date.now(); save();
+        const box = el.querySelector("#letter");
+        const paras = String(L.text || "").split(/\n\s*\n|\n/).map(s => s.trim()).filter(Boolean);
+        paras.forEach((p, i) => later(() => {
+          const d = document.createElement("p"); d.className = "quote"; d.textContent = p;
+          if (!reduced) d.style.animation = "rise 1.4s ease both";
+          box.appendChild(d);
+        }, reduced ? 0 : 500 + i * 2600));
+        if (L.voice) {
+          voiceDB.get(L.id).then(blob => {
+            if (!el.isConnected) return;
+            if (!blob) {
+              if (!paras.length) box.innerHTML = `<p class="lede">This letter was recorded in your voice on another device. Open RISING there to hear it.</p>`;
+              return;
+            }
+            const url = URL.createObjectURL(blob), a = new Audio(url);
+            const row = el.querySelector("#voiceRow"), btn = el.querySelector("#play"), lbl = btn.querySelector(".lbl");
+            row.hidden = false;
+            const playing = on => { lbl.textContent = on ? "Pause" : "Hear it in your voice"; btn.classList.toggle("rec", on); audio.duck(on); };
+            a.onplay = () => playing(true); a.onpause = a.onended = () => playing(false);
+            btn.onclick = () => a.paused ? a.play().catch(() => {}) : a.pause();
+            a.play().catch(() => {});
+            cleanup.push(() => { a.pause(); audio.duck(false); URL.revokeObjectURL(url); });
+          });
+        }
+      } };
+  }
+
+  // ================= the rising (fading) =================
+  function beginRitual() {
+    wake.on();
+    const m = S.myth;
+    const run = { dimmed: "", vow: "" };
+    const owed = unkept; unkept = null;
+    const scenes = [breathScene("First, the breath", "Breathe with the ember.", 4, "I'm here")];
+
+    scenes.push({ html: () => `
+      <p class="eyebrow">The descent</p>
+      <h2>What dimmed your fire?</h2>
+      <p class="lede">Say it plainly. No judgment, no score. A few words is enough.</p>
+      <input type="text" id="dim" placeholder="Tired. Skipped three days. Lost the thread." autocomplete="off" autofocus>
+      <div class="actions"><button class="btn" data-next type="button">Let it be part of the story</button></div>`,
+      mount: el => {
+        const i = el.querySelector("#dim");
+        i.addEventListener("keydown", e => { if (e.key === "Enter") el.querySelector("[data-next]").click(); });
+      },
+      leave: el => { run.dimmed = el.querySelector("#dim").value.trim(); } });
+
+    scenes.push({ html: () => `
+      <p class="eyebrow">Amor fati</p>
+      <h2>Every myth has a descent.</h2>
+      ${owed ? `<p class="lede">“${esc(owed)}” didn't happen yet. That's allowed. It goes in the story with everything else.</p>` : ""}
+      ${run.dimmed ? `<p class="lede">“${esc(run.dimmed)}.” Fine. That goes in the story too. It doesn't get the ending.</p>` : (owed ? "" : `<p class="lede">Whatever brought you here belongs in the story too. It doesn't get the ending.</p>`)}
+      ${m.origin ? `<p class="quote">${esc(m.origin)}</p><p class="lede">You came back then. This is the same road, and you've walked it before.</p>` : ""}
+      <div class="actions"><button class="btn" data-next type="button">I love my fate</button></div>` });
+
+    // rotating rites
+    const rites = [];
+    if (lines(m.gratitude).length) rites.push({ html: () => `
+      <p class="eyebrow">The gratitude rite</p>
+      <h2>Look at what is already yours.</h2>
+      ${listItems(lines(m.gratitude))}
+      <div class="actions"><button class="btn" data-next type="button">Still mine</button></div>` });
+    if (m.victory || carriedVows().length) rites.push({ html: () => {
+      const kept = carriedVows();
+      return `
+      <p class="eyebrow">The rite of remembrance</p>
+      <h2>Remember who you are.</h2>
+      ${m.victory ? `<p class="quote">${esc(m.victory)}</p>` : ""}
+      ${kept.length ? `<p class="eyebrow">Fires you've already carried</p>${listItems(kept.map(c => c.vow), "small")}` : ""}
+      <p class="lede">That wasn't luck, and it wasn't somebody else. It was you, and you're still the same person.</p>
+      <div class="actions"><button class="btn" data-next type="button">That's me</button></div>`; } });
+    if (lines(m.carry).length) rites.push({ html: () => `
+      <p class="eyebrow">The rite of the carried</p>
+      <h2>You don't rise alone.</h2>
+      ${listItems(lines(m.carry))}
+      <div class="actions"><button class="btn" data-next type="button">For them</button></div>` });
+    if (lines(m.ancestors).length) rites.push({ html: () => `
+      <p class="eyebrow">The rite of lineage</p>
+      <h2>Their strength runs in you.</h2>
+      ${listItems(lines(m.ancestors))}
+      <p class="lede">They endured worse with less. You carry what they built.</p>
+      <div class="actions"><button class="btn" data-next type="button">I carry it</button></div>` });
+    if (m.future) rites.push({ html: () => `
+      <p class="eyebrow">The future-self rite</p>
+      <h2>Meet the one who made it.</h2>
+      <p class="quote">${esc(m.future)}</p>
+      <p class="lede">That isn't a fantasy. It's you, a few thousand right choices from now. Today you make one.</p>
+      <div class="actions"><button class="btn" data-next type="button">I'm on my way</button></div>` });
+    if (m.shadow) rites.push({ html: () => `
+      <p class="eyebrow">The war rite</p>
+      <h2>${esc(m.shadow)} came for you again.</h2>
+      <p class="lede">It always shows up near the peak, because that's where you're worth stopping. You've seen its face and you know its tricks.</p>
+      <div class="actions"><button class="btn" data-next type="button">Not today</button></div>` });
+    if (lines(m.toward).length) rites.push({ html: () => `
+      <p class="eyebrow">The rite of fire</p>
+      <h2>This is what you're rising toward.</h2>
+      ${listItems(lines(m.toward))}
+      <div class="actions"><button class="btn" data-next type="button">I still want it</button></div>` });
+
+    // the record: the saga itself becomes a rite once it has chapters
+    const record = (() => {
+      if (!S.saga.length) return null;
+      const past = fadingChapters().filter(c => c.dimmed);
+      const ch = past.length ? pick(past) : pick(S.saga);
+      const risings = fadingChapters().length, carried = S.saga.filter(c => c.outcome === "carried").length;
+      return { html: () => `
+        <p class="eyebrow">The record</p>
+        <h2>You've come back ${risings === 1 ? "once already" : `${risings} times`}.</h2>
+        <p class="lede">Chapter ${roman(ch.n)}, ${esc(fmtShort(ch.at))}:</p>
+        <p class="quote">${ch.dimmed ? `You rose from “${esc(ch.dimmed)}”` : "You rose"} and vowed “${esc(ch.vow)}”.${ch.outcome === "carried" ? " And it carried." : ""}</p>
+        <p class="lede">${carried ? `${carried} of your vows have already carried. ` : ""}The saga is the proof. You always return.</p>
+        <div class="actions"><button class="btn" data-next type="button">I always return</button></div>` };
+    })();
+
+    let chosen = shuffle(rites);
+    if (record && Math.random() < 0.65) chosen = [record, ...chosen.slice(0, 2)];
+    else chosen = chosen.slice(0, 3);
+    scenes.push(...shuffle(chosen));
+
+    const letter = letterScene();
+    if (letter) scenes.push(letter);
+
+    scenes.push({ html: () => `
+      <p class="eyebrow">The rite of the body</p>
+      <h2>Now stand up.</h2>
+      <p class="lede">Get out of the chair. Roll your shoulders back and lift your chin. Breathe in slowly three times, all the way down. If there's cold water nearby, splash your face.</p>
+      <p class="lede">Fire lives in the body as well as the mind.</p>
+      <div class="actions"><button class="btn" data-next type="button">I'm standing</button></div>` });
+
+    scenes.push({ html: () => `
+      <p class="eyebrow">The vow</p>
+      <h2>One act. The next hour.</h2>
+      <p class="lede">You don't need a plan. Pick one thing the real you would do right now.</p>
+      <input type="text" id="vow" placeholder="Twenty minutes on the game. A walk. One set." autocomplete="off" autofocus>
+      <div class="actions"><button class="btn" data-next id="seal" type="button" disabled>Seal the vow</button></div>`,
+      mount: el => {
+        const i = el.querySelector("#vow"), b = el.querySelector("#seal");
+        i.addEventListener("input", () => { b.disabled = !i.value.trim(); });
+        i.addEventListener("keydown", e => { if (e.key === "Enter" && i.value.trim()) b.click(); });
+      },
+      leave: el => { run.vow = el.querySelector("#vow").value.trim(); } });
+
+    scenes.push({ html: () => `
+      <p class="eyebrow">The war cry</p>
+      <p class="cry">${esc(run.vow)}</p>
+      <p class="lede">Say it out loud. Not in your head. Out loud, like you mean it.</p>
+      <div class="actions"><button class="btn" data-next type="button">Said it</button></div>`,
+      mount: () => { embers.burst(40); vibrate([50, 50, 50]); } });
+
+    runScenes(scenes, () => risen({ mode: "fading", dimmed: run.dimmed, vow: run.vow }));
+  }
+
+  // ================= keep the fire (already rising) =================
+  function beginStoke() {
+    wake.on();
+    const m = S.myth;
+    const run = { lit: "", vow: "" };
+    const scenes = [breathScene("Settle the flame", "Breathe into what's already burning.", 2, "I'm here")];
+
+    scenes.push({ html: () => `
+      <p class="eyebrow">The fire as it is</p>
+      <h2>What's lighting you up right now?</h2>
+      <p class="lede">Name what's working. Momentum you can name is momentum you can protect.</p>
+      <input type="text" id="lit" placeholder="Four mornings in a row. The build is finally moving." autocomplete="off" autofocus>
+      <div class="actions"><button class="btn" data-next type="button">That's the fire</button></div>`,
+      mount: el => {
+        const i = el.querySelector("#lit");
+        i.addEventListener("keydown", e => { if (e.key === "Enter") el.querySelector("[data-next]").click(); });
+      },
+      leave: el => { run.lit = el.querySelector("#lit").value.trim(); } });
+
+    scenes.push({ html: () => {
+      const stokes = S.saga.filter(c => c.mode === "rising").length, risings = fadingChapters().length;
+      return `
+      <p class="eyebrow">Guard the peak</p>
+      <h2>This is where people burn out.</h2>
+      ${run.lit ? `<p class="quote">${esc(run.lit)}</p>` : ""}
+      <p class="lede">Most people don't fall at the bottom. They fall near the top, after days of spending discipline without putting anything back. What you have right now is worth protecting.</p>
+      ${S.saga.length ? `<p class="lede">This is chapter ${roman(S.saga.length + 1)}. You've risen from the dark ${risings === 1 ? "once" : `${risings} times`} and fed the fire ${stokes === 1 ? "once" : `${stokes} times`} before this.</p>` : ""}
+      <div class="actions"><button class="btn" data-next type="button">I'll guard it</button></div>`; } });
+
+    if (lines(m.gratitude).length) scenes.push({ html: () => `
+      <p class="eyebrow">Amor fati</p>
+      <h2>Thank the life that's carrying you.</h2>
+      ${listItems(lines(m.gratitude))}
+      <div class="actions"><button class="btn" data-next type="button">Thank you</button></div>` });
+
+    if (m.future && Math.random() < 0.5) scenes.push({ html: () => `
+      <p class="eyebrow">The future-self rite</p>
+      <h2>You're becoming them.</h2>
+      <p class="quote">${esc(m.future)}</p>
+      <div class="actions"><button class="btn" data-next type="button">Closer every day</button></div>` });
+    else if (lines(m.toward).length) scenes.push({ html: () => `
+      <p class="eyebrow">Aim the fire</p>
+      <h2>Point it where it matters.</h2>
+      ${listItems(lines(m.toward))}
+      <div class="actions"><button class="btn" data-next type="button">Locked in</button></div>` });
+
+    if (m.shadow) scenes.push({ html: () => `
+      <p class="eyebrow">The watch</p>
+      <h2>Your shadow hasn't gone anywhere.</h2>
+      <p class="quote">${esc(m.shadow)}</p>
+      <p class="lede">It waits for the day you feel untouchable. Know where it's hiding today, and you won't be surprised when it shows up.</p>
+      <div class="actions"><button class="btn" data-next type="button">Seen</button></div>` });
+
+    // leave fuel for the you who will fade
+    let noteBlob = null;
+    scenes.push({ html: () => `
+      <p class="eyebrow">Leave fuel for later</p>
+      <h2>Write to the you who will fade.</h2>
+      <p class="lede">You have fire right now. Some day soon you won't. Say what that version of you will need to hear. Write it, record it, or both.</p>
+      <textarea id="note" placeholder="Hey. Remember today…"></textarea>
+      ${voiceFieldHTML("nv")}
+      <div class="actions">
+        <button class="btn" data-next id="sealNote" type="button">Seal the letter</button>
+        <button class="ghost" id="skipNote" type="button">Not today</button>
+      </div>`,
+      mount: (el, go) => {
+        mountVoiceField(el, "nv", null, b => { noteBlob = b; });
+        el.querySelector("#skipNote").onclick = () => { noteBlob = null; el.querySelector("#note").value = ""; go(); };
+      },
+      leave: async el => { const t = el.querySelector("#note").value; if (t.trim() || noteBlob) { await addLetter(t, noteBlob); embers.burst(30); } } });
+
+    scenes.push({ html: () => `
+      <p class="eyebrow">Feed the fire</p>
+      <h2>One thing that refuels you today.</h2>
+      <p class="lede">Not another task. Pick something that puts energy back in so you can keep going.</p>
+      <input type="text" id="feed" placeholder="Asleep by 11. Call my brother. A real meal." autocomplete="off" autofocus>
+      <div class="actions"><button class="btn" data-next id="seal" type="button" disabled>Keep it burning</button></div>`,
+      mount: el => {
+        const i = el.querySelector("#feed"), b = el.querySelector("#seal");
+        i.addEventListener("input", () => { b.disabled = !i.value.trim(); });
+        i.addEventListener("keydown", e => { if (e.key === "Enter" && i.value.trim()) b.click(); });
+      },
+      leave: el => { run.vow = el.querySelector("#feed").value.trim(); } });
+
+    runScenes(scenes, () => risen({ mode: "rising", lit: run.lit, vow: run.vow }));
+  }
+
+  function runScenes(scenes, onDone) {
+    let idx = 0;
+    const go = () => { vibrate(10); audio.tap(); idx++; idx < scenes.length ? show() : onDone(); };
+    const show = () => {
+      const s = scenes[idx];
+      setDawn(Math.min(0.92, (idx + 1) / (scenes.length + 1)));
+      render(s.html(), el => {
+        s.mount && s.mount(el, go);
+        const b = el.querySelector("[data-next]");
+        b.onclick = async () => {
+          b.disabled = true;
+          try { s.leave && await s.leave(el); } catch {}
+          go();
+        };
+      }, "ritual");
+    };
+    show();
+  }
+
+  function risen(entry) {
+    const ch = { n: S.saga.length + 1, at: Date.now(), ...entry };
+    S.saga.push(ch);
+    if (S.saga.length > 600) S.saga = S.saga.slice(-600);
+    save();
+    setDawn(1); embers.burst(160); vibrate([40, 60, 40, 60, 120]); audio.risen();
+    const fading = ch.mode === "fading";
+    render(`
+      <p class="eyebrow">Chapter ${roman(ch.n)} · ${esc(fmtDate(ch.at))}</p>
+      <h1 class="risen-title">${fading ? "RISEN" : "BURNING"}</h1>
+      <p class="lede">${fading ? `Your vow is <em>${esc(ch.vow)}</em>.<br>Close this and go do it.` : `You'll feed it with <em>${esc(ch.vow)}</em>.<br>Keep going.`}</p>
+      <div class="actions">
+        <button class="btn" id="done" type="button">I'm going</button>
+        <button class="ghost" id="sagaBtn" type="button">Read your saga</button>
+      </div>`, el => {
+      el.classList.add("center");
+      el.querySelector("#done").onclick = home;
+      el.querySelector("#sagaBtn").onclick = sagaView;
+    }, "risen");
+  }
+
+  // ================= saga =================
+  const syncNote = () => sync.status === "synced"
+    ? "Your myth, letters and saga sync to your Claude account. Voice clips stay on the device that recorded them."
+    : "Saved in this browser only.";
+
+  function sagaView() {
+    wake.off();
+    setDawn(0.2);
+    const items = S.saga.slice().reverse().map(c => `
+      <li>
+        <div class="num">${roman(c.n)}</div>
+        <div class="body">
+          <span class="date">${esc(fmtDate(c.at))} · ${c.mode === "rising" ? "Stoked" : "Risen"}</span>
+          <span class="vow">${c.mode === "rising" ? "Fed it with" : "Vowed"}: ${esc(c.vow)}</span>
+          ${c.dimmed ? `<span class="dim">Rose from: ${esc(c.dimmed)}</span>` : ""}
+          ${c.lit ? `<span class="dim">Burning with: ${esc(c.lit)}</span>` : ""}
+          ${c.outcome === "carried" ? `<span class="chip carried">It carried</span>` : c.outcome === "not-yet" ? `<span class="chip">Not yet</span>` : ""}
+        </div>
+      </li>`).join("");
+    const carried = S.saga.filter(c => c.outcome === "carried").length;
+    render(`
+      <p class="eyebrow">The saga of ${esc(S.myth?.name || "you")}</p>
+      <h2>${S.saga.length ? `${S.saga.length} ${S.saga.length === 1 ? "chapter" : "chapters"} so far.` : "No chapters yet."}</h2>
+      <p class="lede">${S.saga.length ? `None of these are failures. Each one is a time you came back or kept the fire going.${carried ? ` ${carried} ${carried === 1 ? "vow has" : "vows have"} carried.` : ""}` : "Each time you hold the ember, a chapter is written here."}</p>
+      ${items ? `<ol class="saga">${items}</ol>` : ""}
+      <div class="actions">
+        <button class="btn" id="back" type="button">Back to the ember</button>
+        <button class="ghost" id="lettersBtn" type="button">Your letters</button>
+      </div>
+      <p class="fine">${esc(syncNote())}</p>`,
+      el => { el.querySelector("#back").onclick = home; el.querySelector("#lettersBtn").onclick = lettersView; }, "saga");
+  }
+
+  // ================= letters =================
+  function lettersView() {
+    wake.off();
+    setDawn(0.15);
+    const list = S.letters.slice().reverse();
+    render(`
+      <p class="eyebrow">Letters from your strong days</p>
+      <h2>${list.length ? `${list.length} ${list.length === 1 ? "letter" : "letters"} waiting.` : "No letters yet."}</h2>
+      <p class="lede">When you're fading, RISING reads you the one you've heard least recently. Write a new one whenever you feel strong.</p>
+      <div class="actions"><button class="btn" id="write" type="button">Write a new letter</button><button class="ghost" id="back" type="button">Back to the ember</button></div>
+      ${list.length ? `<ul class="letters">${list.map(l => `
+        <li class="letter-card" data-id="${esc(l.id)}">
+          <span class="eyebrow">${esc(fmtDate(l.at))}${l.voice ? " · In your voice" : ""}${l.shown ? ` · Last read ${esc(fmtShort(l.shown))}` : ""}</span>
+          ${l.text ? `<p class="clip">${esc(l.text)}</p>` : ""}
+          <div class="actions">
+            ${l.voice ? `<button class="pill" data-play type="button" hidden><span class="dot"></span><span class="lbl">Play</span></button>` : ""}
+            <button class="ghost" data-del type="button">Delete</button>
+          </div>
+        </li>`).join("")}</ul>` : ""}
+      <p class="fine">${esc(syncNote())}</p>`, el => {
+      el.querySelector("#write").onclick = composeLetter;
+      el.querySelector("#back").onclick = home;
+      el.querySelectorAll(".letter-card").forEach(card => {
+        const id = card.dataset.id;
+        const play = card.querySelector("[data-play]");
+        if (play) voiceDB.get(id).then(blob => {
+          if (!blob || !card.isConnected) return;
+          const url = URL.createObjectURL(blob), a = new Audio(url);
+          play.hidden = false;
+          const lbl = play.querySelector(".lbl");
+          a.onplay = () => { lbl.textContent = "Pause"; play.classList.add("rec"); };
+          a.onpause = a.onended = () => { lbl.textContent = "Play"; play.classList.remove("rec"); };
+          play.onclick = () => a.paused ? a.play().catch(() => {}) : a.pause();
+          cleanup.push(() => { a.pause(); URL.revokeObjectURL(url); });
+        });
+        const del = card.querySelector("[data-del]");
+        del.onclick = () => {
+          if (del.dataset.armed) {
+            S.letters = S.letters.filter(l => l.id !== id); save(); voiceDB.del(id); lettersView();
+          } else { del.dataset.armed = "1"; del.textContent = "Tap again to delete"; setTimeout(() => { if (del.isConnected) { delete del.dataset.armed; del.textContent = "Delete"; } }, 3000); }
+        };
+      });
+    }, "letters");
+  }
+
+  function composeLetter() {
+    setDawn(0.3);
+    let blob = null;
+    render(`
+      <p class="eyebrow">A letter for the day you fade</p>
+      <h2>Say what you'll need to hear.</h2>
+      <p class="lede">Write it, record it in your own voice, or both.</p>
+      <textarea id="compose" class="tall" placeholder="Hey. If you're reading this…" autofocus></textarea>
+      ${voiceFieldHTML("cv")}
+      <div class="actions"><button class="btn" id="seal" type="button">Seal the letter</button><button class="ghost" id="cancel" type="button">Cancel</button></div>`, el => {
+      mountVoiceField(el, "cv", null, b => { blob = b; });
+      el.querySelector("#cancel").onclick = lettersView;
+      el.querySelector("#seal").onclick = async () => {
+        const t = el.querySelector("#compose").value;
+        if (!t.trim() && !blob) { el.querySelector("#compose").focus(); return; }
+        el.querySelector("#seal").disabled = true;
+        await addLetter(t, blob);
+        embers.burst(50); audio.chord([220, 329.6, 440], 0.04, 0.3, 2.5);
+        lettersView();
+      };
+    }, "compose");
+  }
+
+  // ================= boot =================
+  document.getElementById("homeBtn").onclick = () => { if (view !== "home") home(); };
+  sync.onPulled = () => { if (view === "home" || view === "saga" || view === "letters") ({ home, saga: sagaView, letters: lettersView })[view](); };
+  home();
+  sync.init();
+})();
+</script>
