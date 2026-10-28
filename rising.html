@@ -1,7 +1,7 @@
 <title>RISING</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Spectral:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@400;500&family=Shippori+Mincho:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Spectral:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@400;500&display=swap">
 <style>
 /* Layout: a single centered column over a sky that moves from night to dawn as the ritual advances; embers rise behind it. */
 :root {
@@ -360,32 +360,52 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
 
 /* Home: Rise and Tap In. Swipe between them on a phone, side by side on a wide screen. */
 .stage.wide { max-width: 66rem; }
-.sides {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  width: 100%;
-  max-width: 20rem;
-  margin-inline: auto;
-  padding: 4px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--field);
-  box-sizing: border-box;
-}
-.sides button {
+/* Home: a small tab on the screen's edge to swipe (or tap) across to the other side. Phone only. */
+.edge-tab {
+  position: fixed;
+  top: 50%;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 9px;
+  border: 1px solid;
   font-family: var(--label);
-  font-weight: 500;
-  font-size: 0.75rem;
-  letter-spacing: 0.22em;
+  font-size: 0.66rem;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
-  padding: 9px 10px;
-  border: none;
-  border-radius: 999px;
-  background: none;
-  color: var(--ash);
-  transition: background 0.3s, color 0.3s;
+  touch-action: none;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s, transform 0.5s cubic-bezier(.2,.7,.2,1);
 }
-.sides button[aria-selected="true"] { background: rgba(244,196,106,0.16); color: var(--bone); }
+.edge-tab span { writing-mode: vertical-rl; }
+.edge-tab i { font-style: normal; font-size: 1.1rem; line-height: 1; letter-spacing: 0; }
+.edge-tab.to-tap {
+  right: 0;
+  border-right: none;
+  border-radius: 16px 0 0 16px;
+  color: #e4f8ff;
+  border-color: rgba(143,220,245,0.55);
+  background: linear-gradient(90deg, rgba(25,85,110,0.7), rgba(15,62,61,0.92));
+  box-shadow: 0 0 26px rgba(90,200,255,0.28);
+  transform: translate(100%, -50%);
+}
+.edge-tab.to-rise {
+  left: 0;
+  border-left: none;
+  border-radius: 0 16px 16px 0;
+  color: #ffe6cf;
+  border-color: rgba(255,150,90,0.5);
+  background: linear-gradient(270deg, rgba(90,35,45,0.75), rgba(30,18,40,0.92));
+  box-shadow: 0 0 26px rgba(255,123,62,0.25);
+  transform: translate(-100%, -50%);
+}
+.edge-tab.show { opacity: 1; pointer-events: auto; transform: translate(0, -50%); }
+.edge-tab.to-tap.show { animation: nudge 5s ease-in-out 1.2s infinite; }
+@keyframes nudge { 0%, 78%, 100% { transform: translate(0, -50%); } 86% { transform: translate(-7px, -50%); } 92% { transform: translate(0, -50%); } }
+@media (min-width: 900px) { .edge-tab { display: none; } }
 .split {
   display: grid;
   grid-auto-flow: column;
@@ -411,7 +431,6 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
 }
 .side-title { display: none; }
 @media (min-width: 900px) {
-  .sides { display: none; }
   .split { grid-auto-flow: row; grid-template-columns: 1fr 1fr; overflow: visible; gap: 0; }
   .side { padding-inline: 36px; }
   .side + .side { border-left: 1px solid var(--line); }
@@ -491,7 +510,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
 .risen-title.long { font-size: clamp(2.2rem, 9.5vw, 4.2rem); letter-spacing: 0.14em; }
 .saga .found { font-size: 1.02rem; color: var(--gold); overflow-wrap: anywhere; }
 
-/* Tap In's own identity: chi blue and pearl, a mincho serif, on the koi stream.
+/* Tap In's own identity: chi blue and pearl on the koi stream.
    .tap-world sits on the page while you're on the Tap In side, and always on the Tap In half of a wide home screen. */
 .tap-world {
   --gold: #8fdcf5;
@@ -500,19 +519,15 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
   --ash: #9db8bd;
   --line: rgba(225, 245, 250, 0.16);
   --field: rgba(225, 245, 250, 0.06);
-  --display: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", Georgia, serif;
 }
 .tap-world .btn { background: linear-gradient(180deg, rgba(143,220,245,0.18), rgba(79,195,240,0.1)); }
 .tap-world .btn:hover { background: linear-gradient(180deg, rgba(143,220,245,0.3), rgba(79,195,240,0.18)); }
-.tap-world .sides button[aria-selected="true"] { background: rgba(143,220,245,0.16); }
 .tap-world .followup, .tap-world .today-line { border-color: rgba(143,220,245,0.38); background: rgba(10,40,48,0.45); }
 .tap-world .theme[aria-pressed="true"] { background: rgba(143,220,245,0.14); }
 .tap-world .stream button[aria-pressed="true"], .tap-world .affirms button[aria-pressed="true"] { background: rgba(143,220,245,0.12); box-shadow: 0 0 30px rgba(110,210,255,0.18); }
 .tap-world .stream button, .tap-world .affirms button { background: rgba(10,40,48,0.4); }
-.tap-world .affirms button { font-weight: 500; }
 .tap-world .risen-title { color: #f2fbff; text-shadow: 0 0 40px rgba(110,210,255,0.6); }
 .tap-world input::placeholder, .tap-world textarea::placeholder { color: rgba(157,184,189,0.6); }
-.tap-world h1, .tap-world h2, .tap-world .wordmark { font-weight: 500; }
 
 /* The chi orb: on the water to tap in, and as the breath during the ritual */
 .chi, .tap-world .breath .orb {
@@ -594,7 +609,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
     return s;
   }
   let S = loadState();
-  const prefs = Object.assign({ mode: "fading", sound: true, side: "rise" }, ls.get(PREFS, {}));
+  const prefs = Object.assign({ mode: "fading", sound: true }, ls.get(PREFS, {}));
   const savePrefs = () => ls.set(PREFS, prefs);
 
   function save() {
@@ -1166,25 +1181,30 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
   // ================= home: Rise | Tap In =================
   let unkept = null; // a vow that didn't carry, folded into the next descent
 
+  let homeSide = "rise"; // every visit starts on Rise; within a visit, home returns to the side you were on
+
   function home() {
     wake.off();
     const wide = matchMedia("(min-width: 900px)");
-    const side = prefs.side === "tap" ? "tap" : "rise";
     const rise = risePanel(), tap = tapPanel();
     render(`
-      <div class="sides" role="tablist" aria-label="Rise or Tap In">
-        <button type="button" role="tab" data-side="rise" aria-controls="side-rise" aria-selected="${side === "rise"}">Rise</button>
-        <button type="button" role="tab" data-side="tap" aria-controls="side-tap" aria-selected="${side === "tap"}">Tap In</button>
-      </div>
       <div class="split" id="split">
-        <section class="side" id="side-rise" role="tabpanel" aria-label="Rise">${rise.html}</section>
-        <section class="side tap-world" id="side-tap" role="tabpanel" aria-label="Tap In">${tap.html}</section>
+        <section class="side" id="side-rise" aria-label="Rise">${rise.html}</section>
+        <section class="side tap-world" id="side-tap" aria-label="Tap In">${tap.html}</section>
       </div>`, el => {
       el.classList.add("center");
-      const split = el.querySelector("#split"), tabs = [...el.querySelectorAll("[data-side]")];
+      const split = el.querySelector("#split");
+      // a small tab on the edge: swipe it (or tap it) to cross to the other side
+      const tabs = document.createElement("div");
+      tabs.innerHTML = `
+        <button class="edge-tab to-tap" type="button" aria-label="Go to Tap In"><span>Tap In</span><i aria-hidden="true">‹</i></button>
+        <button class="edge-tab to-rise" type="button" aria-label="Back to Rise"><span>Rise</span><i aria-hidden="true">›</i></button>`;
+      document.body.appendChild(tabs);
+      cleanup.push(() => tabs.remove());
+      const toTap = tabs.querySelector(".to-tap"), toRise = tabs.querySelector(".to-rise");
       const mark = s => {
-        if (prefs.side !== s) { prefs.side = s; savePrefs(); }
-        tabs.forEach(t => t.setAttribute("aria-selected", String(t.dataset.side === s)));
+        homeSide = s;
+        toTap.classList.toggle("show", s === "rise"); toRise.classList.toggle("show", s === "tap");
         pond.half = wide.matches; root.classList.toggle("pond-half", wide.matches);
         wide.matches || s === "tap" ? setDawn(0, 1) : setDawn(0);
       };
@@ -1192,20 +1212,26 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
         mark(s);
         if (!wide.matches) split.scrollTo({ left: s === "tap" ? split.clientWidth : 0, behavior: smooth && !reduced ? "smooth" : "auto" });
       };
-      tabs.forEach(t => t.onclick = () => go(t.dataset.side, true));
+      [[toTap, "tap"], [toRise, "rise"]].forEach(([b, to]) => {
+        let x0 = null;
+        b.onpointerdown = e => { x0 = e.clientX; try { b.setPointerCapture(e.pointerId); } catch {} };
+        b.onpointermove = e => { if (x0 != null && Math.abs(e.clientX - x0) > 24) { x0 = null; go(to, true); } };
+        b.onpointerup = b.onpointercancel = () => { x0 = null; };
+        b.onclick = () => go(to, true);
+      });
       let raf = 0;
       split.addEventListener("scroll", () => {
         cancelAnimationFrame(raf);
         raf = requestAnimationFrame(() => {
           if (wide.matches) return;
           const s = split.scrollLeft > split.clientWidth / 2 ? "tap" : "rise";
-          if (s !== prefs.side) mark(s);
+          if (s !== homeSide) mark(s);
         });
       }, { passive: true });
-      const onWide = () => go(prefs.side);
+      const onWide = () => go(homeSide);
       wide.addEventListener("change", onWide);
       cleanup.push(() => wide.removeEventListener("change", onWide));
-      go(side, false);
+      go(homeSide, false);
       rise.bind(el.querySelector("#side-rise"));
       tap.bind(el.querySelector("#side-tap"));
     }, "home");
@@ -1845,7 +1871,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
     const W = 1080, H = 1350, c = document.createElement("canvas");
     c.width = W; c.height = H;
     const x = c.getContext("2d"), light = !!card.light;
-    const fonts = ["150px Marcellus", "34px Marcellus", "500 150px 'Shippori Mincho'", "italic 300 54px Spectral", "500 28px Jost"];
+    const fonts = ["150px Marcellus", "34px Marcellus", "italic 300 54px Spectral", "500 28px Jost"];
     await Promise.race([Promise.all(fonts.map(f => document.fonts.load(f).catch(() => null))), new Promise(r => setTimeout(r, 2500))]);
     let seed = card.seed * 9301 + 49297;
     const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
@@ -1904,9 +1930,8 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
     x.font = "500 28px Jost"; x.fillStyle = light ? "#9db8bd" : "#a99fbb";
     spaced(card.eyebrow.toUpperCase(), 680, 0.24);
     let size = 150;
-    const face = light ? "500 {}px 'Shippori Mincho'" : "{}px Marcellus";
-    x.font = face.replace("{}", size);
-    while (size > 80 && widthOf(card.title, 0.18) > 940) x.font = face.replace("{}", size -= 6);
+    x.font = `${size}px Marcellus`;
+    while (size > 80 && widthOf(card.title, 0.18) > 940) x.font = `${size -= 6}px Marcellus`;
     x.fillStyle = "#fff4e2";
     x.shadowColor = light ? "rgba(110,210,255,0.55)" : "rgba(255,170,90,0.6)"; x.shadowBlur = 50;
     spaced(card.title, 850, 0.18);
@@ -1923,7 +1948,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
     if (line) out.push(line);
     if (out.length > 3) { out.length = 3; out[2] = out[2].replace(/\s*\S*$/, "") + "…"; }
     out.forEach((l, i) => x.fillText(`${i === 0 ? "“" : ""}${l}${i === out.length - 1 ? "”" : ""}`, W / 2, 1040 + i * 70));
-    x.font = light ? "500 34px 'Shippori Mincho'" : "34px Marcellus"; x.fillStyle = light ? "#8fdcf5" : "#f4c46a";
+    x.font = "34px Marcellus"; x.fillStyle = light ? "#8fdcf5" : "#f4c46a";
     spaced(light ? "TAP IN" : "RISING", H - 90, 0.42);
     return new Promise((res, rej) => c.toBlob(b => b ? res(b) : rej(new Error("no image")), "image/png"));
   }
@@ -2077,7 +2102,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
       <h2>You're attuned.</h2>
       <p class="lede">The current was always running. Now you know how to step into it. Tap in whenever you want to feel how full the day already is, and come back later to tell it what found you.</p>
       <div class="actions"><button class="btn" id="now" type="button">Tap in now</button><button class="ghost" id="later" type="button">Later</button></div>`,
-      el => { el.querySelector("#now").onclick = () => { touchStart(); beginTapIn(); }; el.querySelector("#later").onclick = () => { prefs.side = "tap"; savePrefs(); home(); }; }, "attuned");
+      el => { el.querySelector("#now").onclick = () => { touchStart(); beginTapIn(); }; el.querySelector("#later").onclick = () => { homeSide = "tap"; home(); }; }, "attuned");
   }
 
   function attuneView(changed) {
@@ -2211,7 +2236,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
     const t = { n: S.flow.length + 1, at: Date.now(), ...entry };
     S.flow.push(t);
     if (S.flow.length > 600) S.flow = S.flow.slice(-600);
-    prefs.side = "tap"; savePrefs();
+    homeSide = "tap";
     save();
     embers.burst(160, CHI); vibrate([30, 50, 30, 50, 90]); audio.chord([329.6, 415.3, 493.9, 659.3, 830.6], 0.08, 0.8, 5);
     tappedInScreen(t);
@@ -2283,7 +2308,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
       ${items ? `<ol class="saga">${items}</ol>` : ""}
       <div class="actions"><button class="btn" id="back" type="button">Back to Tap In</button></div>
       <p class="fine">${esc(syncNote())}</p>`, el => {
-      el.querySelector("#back").onclick = () => { prefs.side = "tap"; savePrefs(); home(); };
+      el.querySelector("#back").onclick = () => { homeSide = "tap"; home(); };
       const byN = n => S.flow.find(t => String(t.n) === n);
       el.querySelectorAll("[data-found]").forEach(b => b.onclick = () => { const t = byN(b.dataset.found); if (t) foundScene(t, flowView); });
       el.querySelectorAll("[data-card]").forEach(b => b.onclick = () => { const t = byN(b.dataset.card); if (t) cardView(tapCard(t), flowView); });
