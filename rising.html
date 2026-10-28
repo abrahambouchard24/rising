@@ -440,21 +440,22 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
 /* Tap In: tap the water */
 .spring {
   position: relative;
-  width: 190px; height: 190px;
-  max-width: 56vw; max-height: 56vw;
+  width: 210px; height: 210px;
+  max-width: 62vw; max-height: 62vw;
   border: none;
   border-radius: 50%;
   padding: 0;
-  background: radial-gradient(circle, rgba(120,210,255,0.12) 0%, rgba(120,210,255,0.04) 55%, rgba(120,210,255,0) 72%);
+  background: radial-gradient(circle, rgba(2,12,22,0.62) 0%, rgba(2,12,22,0.42) 50%, rgba(2,12,22,0) 74%);
 }
-.spring .ring { position: absolute; inset: 31%; border-radius: 50%; border: 1px solid rgba(150,225,255,0.5); animation: ripple 4.8s ease-out infinite; }
-.spring .ring:nth-child(2) { animation-delay: 1.6s; }
-.spring .ring:nth-child(3) { animation-delay: 3.2s; }
-.spring .chi { position: absolute; inset: 31%; border-radius: 50%; animation: shimmer 4s ease-in-out infinite; transition: transform 0.5s cubic-bezier(.2,.7,.2,1); }
+.spring .track { position: absolute; inset: 1px; border-radius: 50%; border: 1.5px solid rgba(143,220,245,0.22); }
+.spring .ring { position: absolute; inset: 22%; border-radius: 50%; border: 1px solid rgba(150,225,255,0.4); animation: ripple 4.8s ease-out infinite; }
+.spring .ring:nth-child(3) { animation-delay: 1.6s; }
+.spring .ring:nth-child(4) { animation-delay: 3.2s; }
+.spring .chi { position: absolute; inset: 22%; border-radius: 50%; animation: shimmer 4s ease-in-out infinite; transition: transform 0.5s cubic-bezier(.2,.7,.2,1); }
 .spring:active .chi { transform: scale(1.15); }
 .spring.on .chi { transform: scale(1.45); }
 .spring.on .ring { animation-duration: 1.5s; }
-@keyframes ripple { from { transform: scale(1); opacity: 0.85; } to { transform: scale(2.7); opacity: 0; } }
+@keyframes ripple { from { transform: scale(1); opacity: 0.8; } to { transform: scale(1.85); opacity: 0; } }
 @keyframes shimmer { 0%,100% { filter: brightness(0.95); } 50% { filter: brightness(1.15); } }
 .today-line {
   width: 100%;
@@ -797,16 +798,14 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
   })();
 
   // ================= the koi stream (Tap In's world) =================
-  // Looking down into clear moving water: light rippling over riverbed stones, petals and
-  // gold flecks drifting downstream, koi gliding. It shows as much as --g says; on a wide
+  // Looking down into clear, deep water: light rippling faintly over riverbed stones, a few
+  // petals drifting downstream, three koi gliding deep below (dimmed and softened by the water). It shows as much as --g says; on a wide
   // home screen it fills only the Tap In half. The same painters draw the Tap In share card.
   const CURRENT = 16; // how fast the water carries things downstream, in CSS px per second
   const KOI_SKINS = [
-    { base: "#f7f0e6", spots: ["#e4512a", "#e4512a", "#cf3d1c"] }, // kohaku: white and red
-    { base: "#f0bd55", spots: [], gold: true },                      // ogon: all gold
-    { base: "#f7f0e6", spots: ["#e4512a", "#1c1a22", "#1c1a22"] }, // sanke: white, red, black
-    { base: "#ff8a3d", spots: ["#ffd9a8", "#ffd9a8"] },              // orange
-    { base: "#26242d", spots: ["#f2a03a", "#f7f0e6"] },              // black with orange
+    { base: "#d9d7d1", spots: ["#b5573c", "#b5573c", "#a64a32"] }, // kohaku: white and red, muted by the water
+    { base: "#c9a764", spots: [], gold: true },                      // ogon: soft gold
+    { base: "#d9d7d1", spots: ["#b5573c", "#2a2c34", "#2a2c34"] }, // sanke: white, red, black
   ];
   const seeded = n => () => (n = (n * 9301 + 49297) % 233280) / 233280;
 
@@ -854,7 +853,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
     outline();
     if (k.skin.gold) {
       const g = c.createLinearGradient(...P[0], ...P[N - 1]);
-      g.addColorStop(0, "#ffe7a1"); g.addColorStop(0.5, "#f3c25a"); g.addColorStop(1, "#d99a35");
+      g.addColorStop(0, "#e0c88c"); g.addColorStop(0.5, "#c9a764"); g.addColorStop(1, "#a8843f");
       c.fillStyle = g;
     } else c.fillStyle = k.skin.base;
     c.fill();
@@ -873,21 +872,14 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
   }
 
   function makeDrift(rnd, W, H) {
-    return { x: rnd() * W, y: rnd() * H, r: 0, rot: rnd() * 6, vr: (rnd() - 0.5) * 0.8, ph: rnd() * 9, fleck: rnd() < 0.4, depth: 0.7 + rnd() * 0.7 };
+    return { x: rnd() * W, y: rnd() * H, rot: rnd() * 6, vr: (rnd() - 0.5) * 0.8, ph: rnd() * 9, depth: 0.7 + rnd() * 0.7 };
   }
   function drawDrift(c, p, s) {
-    if (p.fleck) {
-      const r = 3 * s * p.depth, g = c.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 3);
-      g.addColorStop(0, "rgba(200,242,255,0.9)"); g.addColorStop(1, "rgba(120,200,255,0)");
-      c.globalCompositeOperation = "lighter"; c.fillStyle = g; c.beginPath(); c.arc(p.x, p.y, r * 3, 0, Math.PI * 2); c.fill();
-      c.globalCompositeOperation = "source-over";
-      return;
-    }
-    const r = 7 * s * p.depth;
+    const r = 6 * s * p.depth;
     c.save(); c.translate(p.x, p.y); c.rotate(p.rot);
     const petal = () => { c.beginPath(); c.moveTo(0, -r); c.quadraticCurveTo(r * 0.95, -r * 0.1, 0, r); c.quadraticCurveTo(-r * 0.95, -r * 0.1, 0, -r); };
-    c.translate(3 * s, 6 * s); petal(); c.fillStyle = "rgba(2,16,18,0.22)"; c.fill(); c.translate(-3 * s, -6 * s);
-    petal(); c.fillStyle = "rgba(255,206,220,0.9)"; c.fill();
+    c.translate(3 * s, 6 * s); petal(); c.fillStyle = "rgba(2,12,20,0.18)"; c.fill(); c.translate(-3 * s, -6 * s);
+    petal(); c.fillStyle = "rgba(222,230,240,0.5)"; c.fill();
     c.restore();
   }
 
@@ -899,7 +891,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
     for (let i = 0; i < n; i++) {
       const x = rnd() * W, y = rnd() * H, rx = (14 + rnd() * 46) * s, ry = rx * (0.55 + rnd() * 0.35);
       const g = c.createRadialGradient(x - rx * 0.3, y - ry * 0.3, 0, x, y, rx);
-      g.addColorStop(0, `rgba(150,190,170,${0.06 + rnd() * 0.08})`); g.addColorStop(0.7, "rgba(40,80,72,0.08)"); g.addColorStop(1, "rgba(3,22,24,0.22)");
+      g.addColorStop(0, `rgba(140,180,205,${0.05 + rnd() * 0.06})`); g.addColorStop(0.7, "rgba(30,70,90,0.08)"); g.addColorStop(1, "rgba(3,16,26,0.22)");
       c.fillStyle = g; c.beginPath(); c.ellipse(x, y, rx, ry, rnd() * Math.PI, 0, Math.PI * 2); c.fill();
     }
     return cv;
@@ -907,7 +899,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
 
   function paintWater(c, W, H, t, s, stones) {
     const g = c.createLinearGradient(0, 0, W * 0.35, H);
-    g.addColorStop(0, "#0c3034"); g.addColorStop(0.5, "#0f3e3d"); g.addColorStop(1, "#0a2a30");
+    g.addColorStop(0, "#0a2533"); g.addColorStop(0.5, "#0c2f3d"); g.addColorStop(1, "#081c27");
     c.fillStyle = g; c.fillRect(0, 0, W, H);
     if (stones) c.drawImage(stones, 0, 0);
     c.globalCompositeOperation = "lighter";
@@ -915,7 +907,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
     for (let i = 0; i < 4; i++) {
       const x = W * (0.15 + 0.7 * (Math.sin(t * 0.05 + i * 2.1) + 1) / 2), y = (((i * 0.29 + t * 0.01) % 1.3) - 0.15) * H, r = Math.max(W, H) * 0.32;
       const d = c.createRadialGradient(x, y, 0, x, y, r);
-      d.addColorStop(0, "rgba(120,225,195,0.07)"); d.addColorStop(1, "rgba(120,225,195,0)");
+      d.addColorStop(0, "rgba(110,190,235,0.05)"); d.addColorStop(1, "rgba(110,190,235,0)");
       c.fillStyle = d; c.fillRect(0, 0, W, H);
     }
     // caustics: two families of wavering light lines that cross into a moving net
@@ -932,20 +924,35 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
           const [x, y] = vertical ? [off, q] : [q, off];
           first ? c.moveTo(x, y) : c.lineTo(x, y);
         }
-        c.strokeStyle = "rgba(160,255,220,0.028)"; c.lineWidth = 10 * s; c.stroke();
-        c.strokeStyle = "rgba(215,255,240,0.045)"; c.lineWidth = (1.2 + h) * s; c.stroke();
+        c.strokeStyle = "rgba(150,215,255,0.018)"; c.lineWidth = 10 * s; c.stroke();
+        c.strokeStyle = "rgba(205,240,255,0.03)"; c.lineWidth = (1.2 + h) * s; c.stroke();
       }
     };
     net(Math.max(6, Math.round(H / s / 80)), false);
     net(Math.max(4, Math.round(W / s / 110)), true);
     c.globalCompositeOperation = "source-over";
   }
+  // darker toward the edges, so the eye settles in the middle
+  function paintVignette(c, W, H, cx, cy) {
+    const r = Math.hypot(W, H) / 2, v = c.createRadialGradient(cx, cy, r * 0.22, cx, cy, r * 1.05);
+    v.addColorStop(0, "rgba(2,10,18,0)"); v.addColorStop(1, "rgba(2,10,18,0.72)");
+    c.fillStyle = v; c.fillRect(0, 0, W, H);
+  }
+  // koi are drawn on their own layer, then laid in softly so they read as deep underwater
+  function layKoi(c, W, H, s, koi, layer) {
+    layer.width === W && layer.height === H ? layer.getContext("2d").clearRect(0, 0, W, H) : (layer.width = W, layer.height = H);
+    const k = layer.getContext("2d");
+    for (const f of koi) drawKoi(k, f, s);
+    c.save(); c.globalAlpha = 0.62;
+    try { c.filter = `blur(${1.4 * s}px)`; } catch {}
+    c.drawImage(layer, 0, 0); c.restore();
+  }
   function drawRings(c, x, y, age, big, s) {
     for (let i = 0; i < 3; i++) {
       const a = age - i * 0.35;
       if (a <= 0) continue;
       const r = a * (big ? 150 : 70) * s, alpha = Math.max(0, 1 - age / 2.6) * (big ? 0.55 : 0.32);
-      c.strokeStyle = `rgba(225,255,242,${alpha})`; c.lineWidth = (big ? 1.8 : 1.2) * s;
+      c.strokeStyle = `rgba(200,235,255,${alpha})`; c.lineWidth = (big ? 1.8 : 1.2) * s;
       c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.stroke();
     }
   }
@@ -953,6 +960,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
   const pond = (() => {
     const cv = document.getElementById("pond"), c = cv.getContext("2d");
     const rnd = seeded(20261028);
+    const layer = document.createElement("canvas");
     let W = 0, H = 0, s = 1, stones = null, koi = [], drift = [], rings = [], t = 0, last = performance.now();
     let level = 0, hiddenAt = 0, attract = null, nextDrop = 3, shade = 0;
     const api = {
@@ -966,9 +974,9 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
     function size() {
       s = Math.min(devicePixelRatio || 1, 2); W = cv.width = innerWidth * s; H = cv.height = innerHeight * s;
       stones = makeStones(W, H, s, seeded(7));
-      const len = Math.min(Math.min(W, H) * 0.2, 150 * s), n = innerWidth > 900 ? 6 : 4;
-      koi = Array.from({ length: n }, (_, i) => Object.assign(makeKoi(rnd, len * (0.8 + rnd() * 0.35), i), { x: W * (0.15 + rnd() * 0.7), y: H * (0.15 + rnd() * 0.7) }));
-      drift = Array.from({ length: Math.round(W * H / (s * s) / 22000) + 6 }, () => makeDrift(rnd, W, H));
+      const len = Math.min(Math.min(W, H) * 0.2, 150 * s);
+      koi = Array.from({ length: 3 }, (_, i) => Object.assign(makeKoi(rnd, len * (0.85 + rnd() * 0.3), i), { x: W * (i % 2 ? 0.85 : 0.15), y: H * (0.15 + i * 0.35) }));
+      drift = Array.from({ length: Math.round(W * H / (s * s) / 90000) + 2 }, () => makeDrift(rnd, W, H));
     }
     function step(dt) {
       if (attract && t > attract.until) attract = null;
@@ -977,8 +985,10 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
         const m = k.len, dx = attract ? attract.x - k.x : 0, dy = attract ? attract.y - k.y : 0, near = attract && Math.hypot(dx, dy) < m * 0.9;
         let target = Math.sin(t * k.f + k.k) * 0.7;
         const steer = (tx, ty, gain) => { const d = Math.atan2(ty - k.y, tx - k.x) - k.a; return Math.max(-1.6, Math.min(1.6, Math.atan2(Math.sin(d), Math.cos(d)) * gain)); };
+        const cx = (x0 + W) / 2, cy = H / 2, keep = Math.min(W - x0, H) * 0.32; // the orb and the words live in the middle
         if (attract && !near) target = steer(attract.x, attract.y, 2.2);
-        else if (k.x < x0 + m || k.x > W - m || k.y < m || k.y > H - m) target = steer((x0 + W) / 2, H / 2, 1.5);
+        else if (!attract && Math.hypot(k.x - cx, k.y - cy) < keep) target = steer(2 * k.x - cx, 2 * k.y - cy, 1.6);
+        else if (k.x < x0 + m || k.x > W - m || k.y < m || k.y > H - m) target = steer(cx, cy, 1.5);
         k.turn += (target - k.turn) * Math.min(1, dt * 1.6);
         const speed = (attract && !near ? 80 : near ? 18 : 30) * s;
         k.v += (speed - k.v) * Math.min(1, dt * 1.3);
@@ -998,9 +1008,10 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
     function draw() {
       paintWater(c, W, H, t, s, stones);
       for (const p of drift) if (p.depth < 1) drawDrift(c, p, s);
-      for (const k of koi) drawKoi(c, k, s);
+      layKoi(c, W, H, s, koi, layer);
       for (const p of drift) if (p.depth >= 1) drawDrift(c, p, s);
       for (const r of rings) drawRings(c, r.x, r.y, t - r.t0, r.big, s);
+      paintVignette(c, W, H, api.half ? W * 0.75 : W / 2, H / 2);
       if (shade > 0.01) { c.fillStyle = `rgba(5,22,26,${shade.toFixed(3)})`; c.fillRect(0, 0, W, H); }
     }
     function frame(now) {
@@ -1354,10 +1365,10 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
         </div>` : ""}
       <div class="today-line"><p class="eyebrow">Today's possibility</p><span>${esc(line)}</span></div>
       <div class="ember-wrap">
-        <button class="spring" id="spring" type="button" aria-label="Tap the water to tap in"><span class="ring"></span><span class="ring"></span><span class="ring"></span><span class="chi"></span></button>
+        <button class="spring" id="spring" type="button" aria-label="Touch the water to tap in"><span class="track"></span><span class="ring"></span><span class="ring"></span><span class="ring"></span><span class="chi"></span></button>
       </div>
       <div class="hold-label">
-        <strong>Tap in</strong>
+        <strong>Touch the water</strong>
         <span>${sub}</span>
       </div>
       <div class="actions" style="justify-content:center">
@@ -1373,7 +1384,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
           touchStart();
           const b = spring.getBoundingClientRect(), cx = b.left + b.width / 2, cy = b.top + b.height / 2;
           pond.ripple(cx, cy, true); pond.call(cx, cy);
-          spring.classList.add("on"); el.querySelector(".hold-label strong").textContent = "Tapping in";
+          spring.classList.add("on"); el.querySelector(".hold-label strong").textContent = "Stepping in";
           vibrate([20, 40, 20]); audio.chord([329.6, 415.3, 493.9, 659.3], 0.06, 0.2, 3);
           setTimeout(beginTapIn, 1500);
         };
@@ -1880,17 +1891,21 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
       // the koi stream: two koi circling each other around ripples, petals on the current
       const s = W / 390;
       paintWater(x, W, H, card.seed * 1.7, s, makeStones(W, H, s, seeded(card.seed + 11)));
-      for (let i = 0; i < 14; i++) { const p = makeDrift(rnd, W, H * 0.62); if (!p.fleck || i % 2) drawDrift(x, p, s); }
-      drawRings(x, ex, ey, 1.25, true, s * 0.95);
-      const chi = x.createRadialGradient(ex, ey, 0, ex, ey, 78);
-      chi.addColorStop(0, "#ffffff"); chi.addColorStop(0.18, "#dcf7ff"); chi.addColorStop(0.42, "#8fe1ff"); chi.addColorStop(0.7, "rgba(58,163,230,0.55)"); chi.addColorStop(1, "rgba(40,120,210,0)");
-      x.globalCompositeOperation = "lighter"; x.fillStyle = chi; x.beginPath(); x.arc(ex, ey, 78, 0, Math.PI * 2); x.fill(); x.globalCompositeOperation = "source-over";
-      const R = 120, th = rnd() * Math.PI * 2;
-      [0, 1].forEach(i => {
+      for (let i = 0; i < 6; i++) drawDrift(x, makeDrift(rnd, W, H * 0.62), s);
+      const R = 165, th = rnd() * Math.PI * 2;
+      layKoi(x, W, H, s, [0, 1].map(i => {
         const k = makeKoi(rnd, 270, i), a = th + i * Math.PI;
-        Object.assign(k, { x: ex + Math.cos(a) * R, y: ey + Math.sin(a) * R, a: a + Math.PI / 2, turn: -1.25, phase: 1.2 + i });
-        drawKoi(x, k, s);
-      });
+        return Object.assign(k, { x: ex + Math.cos(a) * R, y: ey + Math.sin(a) * R, a: a + Math.PI / 2, turn: -1.25, phase: 1.2 + i });
+      }), document.createElement("canvas"));
+      paintVignette(x, W, H, ex, ey);
+      const pool = x.createRadialGradient(ex, ey, 0, ex, ey, 190);
+      pool.addColorStop(0, "rgba(2,12,22,0.55)"); pool.addColorStop(1, "rgba(2,12,22,0)");
+      x.fillStyle = pool; x.beginPath(); x.arc(ex, ey, 190, 0, Math.PI * 2); x.fill();
+      drawRings(x, ex, ey, 1.1, true, s * 0.8);
+      x.strokeStyle = "rgba(143,220,245,0.22)"; x.lineWidth = 3; x.beginPath(); x.arc(ex, ey, 185, 0, Math.PI * 2); x.stroke();
+      const chi = x.createRadialGradient(ex, ey, 0, ex, ey, 100);
+      chi.addColorStop(0, "#ffffff"); chi.addColorStop(0.18, "#dcf7ff"); chi.addColorStop(0.42, "#8fe1ff"); chi.addColorStop(0.7, "rgba(58,163,230,0.55)"); chi.addColorStop(1, "rgba(40,120,210,0)");
+      x.globalCompositeOperation = "lighter"; x.fillStyle = chi; x.beginPath(); x.arc(ex, ey, 100, 0, Math.PI * 2); x.fill(); x.globalCompositeOperation = "source-over";
       const fade = x.createLinearGradient(0, 560, 0, H);
       fade.addColorStop(0, "rgba(7,28,32,0)"); fade.addColorStop(0.3, "rgba(7,28,32,0.72)"); fade.addColorStop(1, "rgba(6,24,28,0.9)");
       x.fillStyle = fade; x.fillRect(0, 560, W, H - 560);
