@@ -2,6 +2,8 @@
 
 Not a tracker. You open it when your fire is fading (or when it's burning and you want to keep it that way), hold the ember, and it hands your own fire back to you: your myth, your people, your saga, and letters in your own voice from stronger days.
 
+RISING has two sides. **Rise** is for when the fire is low. **Tap In** is for every ordinary day: attune once to what you want to be open to, then tap in to see the day's possibilities, say your affirmations, name what you're open to, and later log what found you.
+
 - Installable app: https://abrahambouchard24.github.io/rising/ (rebuilt and deployed by GitHub Actions on every push to `main`)
 - claude.ai version: https://claude.ai/artifact/72H9pXhLuxfKv5JamfEX8j
 
