@@ -1,7 +1,7 @@
 <title>RISING</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Spectral:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Spectral:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@400;500&family=Shippori+Mincho:wght@400;500&display=swap">
 <style>
 /* Layout: a single centered column over a sky that moves from night to dawn as the ritual advances; embers rise behind it. */
 :root {
@@ -426,21 +426,14 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
   border: none;
   border-radius: 50%;
   padding: 0;
-  background: radial-gradient(circle, rgba(220,255,240,0.1) 0%, rgba(220,255,240,0.03) 55%, rgba(220,255,240,0) 70%);
+  background: radial-gradient(circle, rgba(120,210,255,0.12) 0%, rgba(120,210,255,0.04) 55%, rgba(120,210,255,0) 72%);
 }
-.spring .ring { position: absolute; inset: 38%; border-radius: 50%; border: 1px solid rgba(220,255,240,0.5); animation: ripple 4.8s ease-out infinite; }
+.spring .ring { position: absolute; inset: 31%; border-radius: 50%; border: 1px solid rgba(150,225,255,0.5); animation: ripple 4.8s ease-out infinite; }
 .spring .ring:nth-child(2) { animation-delay: 1.6s; }
 .spring .ring:nth-child(3) { animation-delay: 3.2s; }
-.spring .dot {
-  position: absolute; inset: 45%;
-  border-radius: 50%;
-  background: radial-gradient(circle, #fffdf3 0%, #fff0c6 40%, rgba(244,196,106,0) 75%);
-  box-shadow: 0 0 24px 6px rgba(255,240,200,0.3);
-  animation: shimmer 4s ease-in-out infinite;
-  transition: transform 0.5s cubic-bezier(.2,.7,.2,1);
-}
-.spring:active .dot { transform: scale(1.35); }
-.spring.on .dot { transform: scale(1.8); }
+.spring .chi { position: absolute; inset: 31%; border-radius: 50%; animation: shimmer 4s ease-in-out infinite; transition: transform 0.5s cubic-bezier(.2,.7,.2,1); }
+.spring:active .chi { transform: scale(1.15); }
+.spring.on .chi { transform: scale(1.45); }
 .spring.on .ring { animation-duration: 1.5s; }
 @keyframes ripple { from { transform: scale(1); opacity: 0.85; } to { transform: scale(2.7); opacity: 0; } }
 @keyframes shimmer { 0%,100% { filter: brightness(0.95); } 50% { filter: brightness(1.15); } }
@@ -498,9 +491,51 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
 .risen-title.long { font-size: clamp(2.2rem, 9.5vw, 4.2rem); letter-spacing: 0.14em; }
 .saga .found { font-size: 1.02rem; color: var(--gold); overflow-wrap: anywhere; }
 
+/* Tap In's own identity: chi blue and pearl, a mincho serif, on the koi stream.
+   .tap-world sits on the page while you're on the Tap In side, and always on the Tap In half of a wide home screen. */
+.tap-world {
+  --gold: #8fdcf5;
+  --ember: #4fc3f0;
+  --bone: #eef7f6;
+  --ash: #9db8bd;
+  --line: rgba(225, 245, 250, 0.16);
+  --field: rgba(225, 245, 250, 0.06);
+  --display: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", Georgia, serif;
+}
+.tap-world .btn { background: linear-gradient(180deg, rgba(143,220,245,0.18), rgba(79,195,240,0.1)); }
+.tap-world .btn:hover { background: linear-gradient(180deg, rgba(143,220,245,0.3), rgba(79,195,240,0.18)); }
+.tap-world .sides button[aria-selected="true"] { background: rgba(143,220,245,0.16); }
+.tap-world .followup, .tap-world .today-line { border-color: rgba(143,220,245,0.38); background: rgba(10,40,48,0.45); }
+.tap-world .theme[aria-pressed="true"] { background: rgba(143,220,245,0.14); }
+.tap-world .stream button[aria-pressed="true"], .tap-world .affirms button[aria-pressed="true"] { background: rgba(143,220,245,0.12); box-shadow: 0 0 30px rgba(110,210,255,0.18); }
+.tap-world .stream button, .tap-world .affirms button { background: rgba(10,40,48,0.4); }
+.tap-world .affirms button { font-weight: 500; }
+.tap-world .risen-title { color: #f2fbff; text-shadow: 0 0 40px rgba(110,210,255,0.6); }
+.tap-world input::placeholder, .tap-world textarea::placeholder { color: rgba(157,184,189,0.6); }
+.tap-world h1, .tap-world h2, .tap-world .wordmark { font-weight: 500; }
+
+/* The chi orb: on the water to tap in, and as the breath during the ritual */
+.chi, .tap-world .breath .orb {
+  background: radial-gradient(circle, #ffffff 0%, #dcf7ff 15%, #8fe1ff 36%, #3aa3e6 60%, rgba(40,120,210,0.35) 78%, rgba(40,120,210,0) 100%);
+  box-shadow: 0 0 50px 12px rgba(90,200,255,0.35), 0 0 130px 36px rgba(60,150,255,0.14);
+}
+.chi::before, .chi::after, .tap-world .breath .orb::before, .tap-world .breath .orb::after {
+  content: "";
+  position: absolute;
+  inset: -18%;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0deg, rgba(210,248,255,0.7) 40deg, transparent 110deg, rgba(130,215,255,0.5) 200deg, transparent 260deg);
+  -webkit-mask: radial-gradient(circle, transparent 38%, #000 52%, transparent 70%);
+  mask: radial-gradient(circle, transparent 38%, #000 52%, transparent 70%);
+  animation: swirl 5s linear infinite;
+}
+.chi::after, .tap-world .breath .orb::after { inset: -32%; opacity: 0.6; animation-duration: 8s; animation-direction: reverse; }
+.tap-world .breath .orb { position: relative; }
+@keyframes swirl { to { transform: rotate(360deg); } }
+
 @media (prefers-reduced-motion: reduce) {
   .scene, .big-list li, .stream li { animation: none; opacity: 1; }
-  .ember .core, .spring .ring, .spring .dot { animation: none; }
+  .ember .core, .spring .ring, .spring .chi, .chi::before, .chi::after, .tap-world .breath .orb::before, .tap-world .breath .orb::after { animation: none; }
   .breath .orb { transition: none; }
 }
 </style>
@@ -664,6 +699,8 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
   const $stage = document.getElementById("stage");
   const $scroll = document.getElementById("appScroll");
   const root = document.documentElement;
+  const $wordmark = document.getElementById("homeBtn");
+  const CHI = 192; // hue of Tap In's sparks
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const lines = s => String(s || "").split("\n").map(x => x.trim()).filter(Boolean);
   const roman = n => { const m = [[1000,"M"],[900,"CM"],[500,"D"],[400,"CD"],[100,"C"],[90,"XC"],[50,"L"],[40,"XL"],[10,"X"],[9,"IX"],[5,"V"],[4,"IV"],[1,"I"]]; let r = ""; for (const [v, s] of m) while (n >= v) { r += s; n -= v; } return r || "0"; };
@@ -683,6 +720,8 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
   function setDawn(p, g = 0) {
     root.style.setProperty("--p", p.toFixed(3)); root.style.setProperty("--g", g.toFixed(3));
     pond.show(g); embers.calm = g > 0.5 && !pond.half;
+    const tap = g >= 0.5 && !pond.half;
+    if (root.classList.contains("tap-world") !== tap) { root.classList.toggle("tap-world", tap); $wordmark.textContent = tap ? "TAP IN" : "RISING"; }
     embers.intensity = 0.25 + p * 1.6; audio.dawn(p);
   }
   function render(html, after, name = "scene") {
@@ -824,7 +863,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
   function drawDrift(c, p, s) {
     if (p.fleck) {
       const r = 3 * s * p.depth, g = c.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 3);
-      g.addColorStop(0, "rgba(255,226,140,0.9)"); g.addColorStop(1, "rgba(255,200,90,0)");
+      g.addColorStop(0, "rgba(200,242,255,0.9)"); g.addColorStop(1, "rgba(120,200,255,0)");
       c.globalCompositeOperation = "lighter"; c.fillStyle = g; c.beginPath(); c.arc(p.x, p.y, r * 3, 0, Math.PI * 2); c.fill();
       c.globalCompositeOperation = "source-over";
       return;
@@ -1139,7 +1178,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
       </div>
       <div class="split" id="split">
         <section class="side" id="side-rise" role="tabpanel" aria-label="Rise">${rise.html}</section>
-        <section class="side" id="side-tap" role="tabpanel" aria-label="Tap In">${tap.html}</section>
+        <section class="side tap-world" id="side-tap" role="tabpanel" aria-label="Tap In">${tap.html}</section>
       </div>`, el => {
       el.classList.add("center");
       const split = el.querySelector("#split"), tabs = [...el.querySelectorAll("[data-side]")];
@@ -1289,7 +1328,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
         </div>` : ""}
       <div class="today-line"><p class="eyebrow">Today's possibility</p><span>${esc(line)}</span></div>
       <div class="ember-wrap">
-        <button class="spring" id="spring" type="button" aria-label="Tap the water to tap in"><span class="ring"></span><span class="ring"></span><span class="ring"></span><span class="dot"></span></button>
+        <button class="spring" id="spring" type="button" aria-label="Tap the water to tap in"><span class="ring"></span><span class="ring"></span><span class="ring"></span><span class="chi"></span></button>
       </div>
       <div class="hold-label">
         <strong>Tap in</strong>
@@ -1806,7 +1845,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
     const W = 1080, H = 1350, c = document.createElement("canvas");
     c.width = W; c.height = H;
     const x = c.getContext("2d"), light = !!card.light;
-    const fonts = ["150px Marcellus", "34px Marcellus", "italic 300 54px Spectral", "500 28px Jost"];
+    const fonts = ["150px Marcellus", "34px Marcellus", "500 150px 'Shippori Mincho'", "italic 300 54px Spectral", "500 28px Jost"];
     await Promise.race([Promise.all(fonts.map(f => document.fonts.load(f).catch(() => null))), new Promise(r => setTimeout(r, 2500))]);
     let seed = card.seed * 9301 + 49297;
     const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
@@ -1817,6 +1856,9 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
       paintWater(x, W, H, card.seed * 1.7, s, makeStones(W, H, s, seeded(card.seed + 11)));
       for (let i = 0; i < 14; i++) { const p = makeDrift(rnd, W, H * 0.62); if (!p.fleck || i % 2) drawDrift(x, p, s); }
       drawRings(x, ex, ey, 1.25, true, s * 0.95);
+      const chi = x.createRadialGradient(ex, ey, 0, ex, ey, 78);
+      chi.addColorStop(0, "#ffffff"); chi.addColorStop(0.18, "#dcf7ff"); chi.addColorStop(0.42, "#8fe1ff"); chi.addColorStop(0.7, "rgba(58,163,230,0.55)"); chi.addColorStop(1, "rgba(40,120,210,0)");
+      x.globalCompositeOperation = "lighter"; x.fillStyle = chi; x.beginPath(); x.arc(ex, ey, 78, 0, Math.PI * 2); x.fill(); x.globalCompositeOperation = "source-over";
       const R = 120, th = rnd() * Math.PI * 2;
       [0, 1].forEach(i => {
         const k = makeKoi(rnd, 270, i), a = th + i * Math.PI;
@@ -1859,16 +1901,17 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
       for (const chr of [...t]) { x.fillText(chr, cx, y); cx += x.measureText(chr).width + gap; }
       x.textAlign = "center";
     };
-    x.font = "500 28px Jost"; x.fillStyle = "#a99fbb";
+    x.font = "500 28px Jost"; x.fillStyle = light ? "#9db8bd" : "#a99fbb";
     spaced(card.eyebrow.toUpperCase(), 680, 0.24);
     let size = 150;
-    x.font = `${size}px Marcellus`;
-    while (size > 80 && widthOf(card.title, 0.18) > 940) x.font = `${size -= 6}px Marcellus`;
+    const face = light ? "500 {}px 'Shippori Mincho'" : "{}px Marcellus";
+    x.font = face.replace("{}", size);
+    while (size > 80 && widthOf(card.title, 0.18) > 940) x.font = face.replace("{}", size -= 6);
     x.fillStyle = "#fff4e2";
-    x.shadowColor = light ? "rgba(190,255,235,0.45)" : "rgba(255,170,90,0.6)"; x.shadowBlur = 50;
+    x.shadowColor = light ? "rgba(110,210,255,0.55)" : "rgba(255,170,90,0.6)"; x.shadowBlur = 50;
     spaced(card.title, 850, 0.18);
     x.shadowBlur = 0;
-    x.font = "500 26px Jost"; x.fillStyle = "#f4c46a";
+    x.font = "500 26px Jost"; x.fillStyle = light ? "#8fdcf5" : "#f4c46a";
     spaced(card.label, 960, 0.24);
     x.font = "italic 300 54px Spectral"; x.fillStyle = "#f4ede3";
     const words = String(card.text || "").split(/\s+/).filter(Boolean), out = [];
@@ -1880,8 +1923,8 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
     if (line) out.push(line);
     if (out.length > 3) { out.length = 3; out[2] = out[2].replace(/\s*\S*$/, "") + "…"; }
     out.forEach((l, i) => x.fillText(`${i === 0 ? "“" : ""}${l}${i === out.length - 1 ? "”" : ""}`, W / 2, 1040 + i * 70));
-    x.font = "34px Marcellus"; x.fillStyle = "#f4c46a";
-    spaced("RISING", H - 90, 0.42);
+    x.font = light ? "500 34px 'Shippori Mincho'" : "34px Marcellus"; x.fillStyle = light ? "#8fdcf5" : "#f4c46a";
+    spaced(light ? "TAP IN" : "RISING", H - 90, 0.42);
     return new Promise((res, rej) => c.toBlob(b => b ? res(b) : rej(new Error("no image")), "image/png"));
   }
 
@@ -2001,7 +2044,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
   }
 
   function attune(i, draft) {
-    setDawn(0.05, 0.3 + i / ATTUNE.length * 0.5);
+    setDawn(0.05, 0.6 + i / ATTUNE.length * 0.4);
     const f = ATTUNE[i];
     const meter = ATTUNE.map((_, j) => `<span class="${j <= i ? "on" : ""}"></span>`).join("");
     render(`
@@ -2028,7 +2071,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
   }
 
   function attuned() {
-    setDawn(0.05, 1); embers.burst(70, 38); audio.chord([329.6, 493.9, 659.3], 0.05, 0.4, 3);
+    setDawn(0.05, 1); embers.burst(70, CHI); audio.chord([329.6, 493.9, 659.3], 0.05, 0.4, 3);
     render(`
       <p class="eyebrow">Attuning is complete</p>
       <h2>You're attuned.</h2>
@@ -2087,7 +2130,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
         const v = readAttuneField(el, f);
         if (JSON.stringify(v) !== JSON.stringify(S.attune[key] ?? (f.type === "themes" ? [] : ""))) {
           S.attune[key] = v; S.attune.editedAt = Date.now(); save();
-          embers.burst(30, 38); audio.chord([329.6, 493.9, 659.3], 0.04, 0.3, 2.5);
+          embers.burst(30, CHI); audio.chord([329.6, 493.9, 659.3], 0.04, 0.3, 2.5);
           return attuneView(key);
         }
         attuneView();
@@ -2136,7 +2179,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
         bs.forEach((b, i) => b.onclick = () => {
           if (b.getAttribute("aria-pressed") === "true") return;
           b.setAttribute("aria-pressed", "true");
-          vibrate(20); embers.burst(20, 38); audio.chord([[440, 493.9, 554.4, 659.3, 740][i] || 880], 0.04, 0.05, 2);
+          vibrate(20); embers.burst(20, CHI); audio.chord([[440, 493.9, 554.4, 659.3, 740][i] || 880], 0.04, 0.05, 2);
           next.disabled = !bs.every(x => x.getAttribute("aria-pressed") === "true");
         });
       } });
@@ -2170,7 +2213,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
     if (S.flow.length > 600) S.flow = S.flow.slice(-600);
     prefs.side = "tap"; savePrefs();
     save();
-    embers.burst(160, 38); vibrate([30, 50, 30, 50, 90]); audio.chord([329.6, 415.3, 493.9, 659.3, 830.6], 0.08, 0.8, 5);
+    embers.burst(160, CHI); vibrate([30, 50, 30, 50, 90]); audio.chord([329.6, 415.3, 493.9, 659.3, 830.6], 0.08, 0.8, 5);
     tappedInScreen(t);
   }
   function tappedInScreen(t) {
@@ -2207,7 +2250,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
       el.querySelector("#cancel").onclick = back;
       keep.onclick = () => {
         t.found = i.value.trim(); t.foundAt = Date.now(); save();
-        embers.burst(90, 38); vibrate([20, 40, 60]); audio.chord([329.6, 415.3, 493.9, 659.3], 0.06, 0.3, 3);
+        embers.burst(90, CHI); vibrate([20, 40, 60]); audio.chord([329.6, 415.3, 493.9, 659.3], 0.06, 0.3, 3);
         render(`
           <p class="eyebrow">Day ${roman(t.n)}</p>
           <h2>It found you.</h2>
