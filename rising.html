@@ -39,14 +39,9 @@ body {
   opacity: var(--p, 0);
   transition: opacity 2.4s ease;
 }
-/* Tap In's sky: light from above instead of a sunrise from below */
-.sky .gold {
-  background:
-    radial-gradient(80% 55% at 50% -8%, rgba(255,232,170,0.42) 0%, rgba(244,196,106,0.16) 40%, rgba(244,196,106,0) 75%),
-    linear-gradient(to bottom, #2b2142 0%, #1b1631 55%, #120f24 100%);
-  opacity: var(--g, 0);
-  transition: opacity 2.4s ease;
-}
+/* Tap In's world: a koi stream, drawn on its own canvas under the embers */
+#pond { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: var(--g, 0); transition: opacity 1.2s ease; }
+.pond-half #pond { clip-path: inset(0 0 0 50%); }
 #embers { width: 100%; height: 100%; }
 
 /* App frame */
@@ -423,44 +418,31 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
   .side-title { display: block; font-family: var(--display); letter-spacing: 0.42em; text-transform: uppercase; font-size: 0.9rem; color: var(--gold); }
 }
 
-/* The current (tap in): a river of light, stars flowing along it */
-.river {
+/* Tap In: tap the water */
+.spring {
   position: relative;
-  display: block;
-  width: 100%;
-  max-width: 26rem;
-  aspect-ratio: 320 / 210;
+  width: 190px; height: 190px;
+  max-width: 56vw; max-height: 56vw;
   border: none;
-  border-radius: 24px;
-  background: none;
+  border-radius: 50%;
   padding: 0;
+  background: radial-gradient(circle, rgba(220,255,240,0.1) 0%, rgba(220,255,240,0.03) 55%, rgba(220,255,240,0) 70%);
 }
-.river svg { display: block; width: 100%; height: 100%; }
-.river .glow { opacity: 0.45; animation: swell 7s ease-in-out infinite; }
-.river .band { opacity: 0.55; transition: opacity 0.8s; }
-.river .thread { opacity: 0.9; }
-.river .stars { fill: none; stroke-linecap: round; animation: linear infinite; }
-.river .s1 { stroke: #fff6dc; stroke-width: 2.2; stroke-dasharray: 0 14; animation-name: flow14; animation-duration: 8s; }
-.river .s2 { stroke: #ffe3a0; stroke-width: 1.3; stroke-dasharray: 0 9; animation-name: flow9; animation-duration: 5.5s; }
-.river .s3 { stroke: #d2e8ff; stroke-width: 3; stroke-dasharray: 0 23; animation-name: flow23; animation-duration: 12s; opacity: 0.8; }
-.river.on .s1 { animation-duration: 1.6s; }
-.river.on .s2 { animation-duration: 1.1s; }
-.river.on .s3 { animation-duration: 2.4s; }
-.river.on .glow { opacity: 0.95; animation: none; }
-.river.on .band { opacity: 0.95; }
-.river .tw { fill: #fff3d0; animation: twinkle 3.2s ease-in-out infinite; }
-.river .node, .river .ring2 { transform-box: fill-box; transform-origin: center; }
-.river .node { animation: shimmer 4s ease-in-out infinite; transition: transform 0.6s cubic-bezier(.2,.7,.2,1); }
-.river .ring2 { fill: none; stroke: rgba(244,196,106,0.7); stroke-width: 1; animation: ripple 3.6s ease-out infinite; }
-.river .ring2.late { animation-delay: 1.8s; }
-.river:active .node { transform: scale(1.25); }
-.river.on .node { transform: scale(1.9); }
-@keyframes flow14 { to { stroke-dashoffset: -140; } }
-@keyframes flow9 { to { stroke-dashoffset: -90; } }
-@keyframes flow23 { to { stroke-dashoffset: -230; } }
-@keyframes swell { 0%,100% { opacity: 0.38; } 50% { opacity: 0.6; } }
-@keyframes twinkle { 0%,100% { opacity: 0.15; } 50% { opacity: 0.9; } }
-@keyframes ripple { from { transform: scale(1); opacity: 0.8; } to { transform: scale(2.6); opacity: 0; } }
+.spring .ring { position: absolute; inset: 38%; border-radius: 50%; border: 1px solid rgba(220,255,240,0.5); animation: ripple 4.8s ease-out infinite; }
+.spring .ring:nth-child(2) { animation-delay: 1.6s; }
+.spring .ring:nth-child(3) { animation-delay: 3.2s; }
+.spring .dot {
+  position: absolute; inset: 45%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fffdf3 0%, #fff0c6 40%, rgba(244,196,106,0) 75%);
+  box-shadow: 0 0 24px 6px rgba(255,240,200,0.3);
+  animation: shimmer 4s ease-in-out infinite;
+  transition: transform 0.5s cubic-bezier(.2,.7,.2,1);
+}
+.spring:active .dot { transform: scale(1.35); }
+.spring.on .dot { transform: scale(1.8); }
+.spring.on .ring { animation-duration: 1.5s; }
+@keyframes ripple { from { transform: scale(1); opacity: 0.85; } to { transform: scale(2.7); opacity: 0; } }
 @keyframes shimmer { 0%,100% { filter: brightness(0.95); } 50% { filter: brightness(1.15); } }
 .today-line {
   width: 100%;
@@ -518,12 +500,13 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
 
 @media (prefers-reduced-motion: reduce) {
   .scene, .big-list li, .stream li { animation: none; opacity: 1; }
-  .ember .core, .river .glow, .river .stars, .river .tw, .river .node, .river .ring2 { animation: none; }
+  .ember .core, .spring .ring, .spring .dot { animation: none; }
   .breath .orb { transition: none; }
 }
 </style>
 
-<div class="sky"><div class="base"></div><div class="gold"></div><div class="dawn"></div></div>
+<div class="sky"><div class="base"></div><div class="dawn"></div></div>
+<canvas id="pond" aria-hidden="true"></canvas>
 <canvas id="embers" aria-hidden="true"></canvas>
 
 <div class="app" id="appScroll">
@@ -696,16 +679,18 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
   let view = "home";
   let cleanup = [];
 
-  // p: the sunrise from below (Rise). g: the light from above (Tap In).
+  // p: the sunrise from below (Rise). g: how much of the koi stream shows (Tap In).
   function setDawn(p, g = 0) {
     root.style.setProperty("--p", p.toFixed(3)); root.style.setProperty("--g", g.toFixed(3));
-    embers.intensity = 0.25 + Math.max(p, g * 0.5) * 1.6; audio.dawn(p);
+    pond.show(g); embers.calm = g > 0.5 && !pond.half;
+    embers.intensity = 0.25 + p * 1.6; audio.dawn(p);
   }
   function render(html, after, name = "scene") {
     clearTimers();
     cleanup.forEach(fn => { try { fn(); } catch {} }); cleanup = [];
     view = name;
     $stage.classList.toggle("wide", name === "home");
+    root.classList.remove("pond-half"); pond.half = false; pond.dim = name === "home" ? 0 : 0.5;
     $stage.innerHTML = `<section class="scene">${html}</section>`;
     $scroll.scrollTop = 0;
     after && after($stage.firstElementChild);
@@ -742,7 +727,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
     }
     function tick() {
       ctx.clearRect(0, 0, w, h);
-      if (!reduced && Math.random() < 0.18 * api.intensity) parts.push(spawn(false));
+      if (!reduced && !api.calm && Math.random() < 0.18 * api.intensity) parts.push(spawn(false));
       ctx.globalCompositeOperation = "lighter";
       parts = parts.filter(p => p.life > 0 && p.y > -20);
       for (const p of parts) {
@@ -754,6 +739,222 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
       requestAnimationFrame(tick);
     }
     addEventListener("resize", size); size(); tick();
+    return api;
+  })();
+
+  // ================= the koi stream (Tap In's world) =================
+  // Looking down into clear moving water: light rippling over riverbed stones, petals and
+  // gold flecks drifting downstream, koi gliding. It shows as much as --g says; on a wide
+  // home screen it fills only the Tap In half. The same painters draw the Tap In share card.
+  const CURRENT = 16; // how fast the water carries things downstream, in CSS px per second
+  const KOI_SKINS = [
+    { base: "#f7f0e6", spots: ["#e4512a", "#e4512a", "#cf3d1c"] }, // kohaku: white and red
+    { base: "#f0bd55", spots: [], gold: true },                      // ogon: all gold
+    { base: "#f7f0e6", spots: ["#e4512a", "#1c1a22", "#1c1a22"] }, // sanke: white, red, black
+    { base: "#ff8a3d", spots: ["#ffd9a8", "#ffd9a8"] },              // orange
+    { base: "#26242d", spots: ["#f2a03a", "#f7f0e6"] },              // black with orange
+  ];
+  const seeded = n => () => (n = (n * 9301 + 49297) % 233280) / 233280;
+
+  function makeKoi(rnd, len, i) {
+    const skin = KOI_SKINS[i % KOI_SKINS.length];
+    return { x: 0, y: 0, a: rnd() * Math.PI * 2, v: 0, len, phase: rnd() * 9, turn: 0, f: 0.12 + rnd() * 0.2, k: rnd() * 9, skin,
+      spots: skin.spots.map(c => ({ c, at: 2 + Math.floor(rnd() * 8), side: rnd() - 0.5, r: 0.55 + rnd() * 0.6 })) };
+  }
+  function drawKoi(c, k, s) {
+    const N = 14, L = k.len, step = L / (N - 1), P = [], A = [];
+    let px = k.x, py = k.y;
+    for (let i = 0; i < N; i++) {
+      const u = i / (N - 1), ang = k.a - k.turn * u * 0.9 + Math.sin(k.phase - u * 4.5) * 0.3 * u;
+      if (i) { px -= Math.cos(ang) * step; py -= Math.sin(ang) * step; }
+      P.push([px, py]); A.push(ang);
+    }
+    const wAt = u => L * 0.12 * (u < 0.22 ? 0.6 + 0.4 * Math.sin(u / 0.22 * Math.PI / 2) : 1 - (u - 0.22) / 0.78 * 0.86);
+    const edge = sgn => P.map(([x, y], i) => { const w = wAt(i / (N - 1)) * sgn; return [x - Math.sin(A[i]) * w, y + Math.cos(A[i]) * w]; });
+    const left = edge(1), right = edge(-1).reverse();
+    const outline = () => {
+      c.beginPath(); c.moveTo(...left[0]);
+      for (const p of left.slice(1)) c.lineTo(...p);
+      for (const p of right) c.lineTo(...p);
+      c.ellipse(P[0][0], P[0][1], wAt(0) * 1.45, wAt(0), A[0], -Math.PI / 2, Math.PI / 2);
+      c.closePath();
+    };
+    const perp = (i, d) => [P[i][0] - Math.sin(A[i]) * d, P[i][1] + Math.cos(A[i]) * d];
+    // shadow on the riverbed
+    c.save(); c.translate(7 * s, 13 * s); outline(); c.fillStyle = "rgba(2,16,18,0.3)"; c.fill(); c.restore();
+    // fins and tail, translucent, under the body
+    c.save(); c.globalAlpha = 0.5; c.fillStyle = k.skin.base;
+    for (const sgn of [1, -1]) {
+      const [fx, fy] = perp(3, sgn * (wAt(3 / 13) + L * 0.05));
+      c.beginPath(); c.ellipse(fx, fy, L * 0.12, L * 0.05, A[3] + Math.PI + sgn * (0.9 + Math.sin(k.phase * 0.7) * 0.25), 0, Math.PI * 2); c.fill();
+    }
+    const [tx, ty] = P[N - 1], back = A[N - 1] + Math.PI, at = (ang, d) => [tx + Math.cos(ang) * d, ty + Math.sin(ang) * d];
+    c.beginPath(); c.moveTo(tx, ty);
+    c.quadraticCurveTo(...at(back + 0.75, L * 0.16), ...at(back + 0.5, L * 0.3));
+    c.quadraticCurveTo(...at(back + 0.12, L * 0.2), ...at(back, L * 0.15));
+    c.quadraticCurveTo(...at(back - 0.12, L * 0.2), ...at(back - 0.5, L * 0.3));
+    c.quadraticCurveTo(...at(back - 0.75, L * 0.16), tx, ty);
+    c.fill();
+    c.restore();
+    // body, then its markings
+    outline();
+    if (k.skin.gold) {
+      const g = c.createLinearGradient(...P[0], ...P[N - 1]);
+      g.addColorStop(0, "#ffe7a1"); g.addColorStop(0.5, "#f3c25a"); g.addColorStop(1, "#d99a35");
+      c.fillStyle = g;
+    } else c.fillStyle = k.skin.base;
+    c.fill();
+    c.save(); outline(); c.clip();
+    for (const sp of k.spots) {
+      const u = sp.at / (N - 1), [sx, sy] = perp(sp.at, sp.side * wAt(u) * 1.3);
+      c.fillStyle = sp.c; c.beginPath(); c.ellipse(sx, sy, sp.r * L * 0.15, sp.r * L * 0.09, A[sp.at], 0, Math.PI * 2); c.fill();
+    }
+    c.restore();
+    // a soft highlight down the back, and the eyes
+    c.strokeStyle = "rgba(255,255,255,0.22)"; c.lineWidth = 1.2 * s; c.beginPath(); c.moveTo(...P[1]);
+    for (const p of P.slice(2, 9)) c.lineTo(...p);
+    c.stroke();
+    c.fillStyle = "rgba(18,16,20,0.85)";
+    for (const sgn of [1, -1]) { const [ex, ey] = perp(0, sgn * wAt(0) * 0.65); c.beginPath(); c.arc(ex + Math.cos(A[0]) * wAt(0) * 0.6, ey + Math.sin(A[0]) * wAt(0) * 0.6, 1.4 * s, 0, Math.PI * 2); c.fill(); }
+  }
+
+  function makeDrift(rnd, W, H) {
+    return { x: rnd() * W, y: rnd() * H, r: 0, rot: rnd() * 6, vr: (rnd() - 0.5) * 0.8, ph: rnd() * 9, fleck: rnd() < 0.4, depth: 0.7 + rnd() * 0.7 };
+  }
+  function drawDrift(c, p, s) {
+    if (p.fleck) {
+      const r = 3 * s * p.depth, g = c.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 3);
+      g.addColorStop(0, "rgba(255,226,140,0.9)"); g.addColorStop(1, "rgba(255,200,90,0)");
+      c.globalCompositeOperation = "lighter"; c.fillStyle = g; c.beginPath(); c.arc(p.x, p.y, r * 3, 0, Math.PI * 2); c.fill();
+      c.globalCompositeOperation = "source-over";
+      return;
+    }
+    const r = 7 * s * p.depth;
+    c.save(); c.translate(p.x, p.y); c.rotate(p.rot);
+    const petal = () => { c.beginPath(); c.moveTo(0, -r); c.quadraticCurveTo(r * 0.95, -r * 0.1, 0, r); c.quadraticCurveTo(-r * 0.95, -r * 0.1, 0, -r); };
+    c.translate(3 * s, 6 * s); petal(); c.fillStyle = "rgba(2,16,18,0.22)"; c.fill(); c.translate(-3 * s, -6 * s);
+    petal(); c.fillStyle = "rgba(255,206,220,0.9)"; c.fill();
+    c.restore();
+  }
+
+  function makeStones(W, H, s, rnd) {
+    const cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+    const c = cv.getContext("2d");
+    try { c.filter = `blur(${4 * s}px)`; } catch {}
+    const n = Math.round(W * H / (s * s) / 9000);
+    for (let i = 0; i < n; i++) {
+      const x = rnd() * W, y = rnd() * H, rx = (14 + rnd() * 46) * s, ry = rx * (0.55 + rnd() * 0.35);
+      const g = c.createRadialGradient(x - rx * 0.3, y - ry * 0.3, 0, x, y, rx);
+      g.addColorStop(0, `rgba(150,190,170,${0.06 + rnd() * 0.08})`); g.addColorStop(0.7, "rgba(40,80,72,0.08)"); g.addColorStop(1, "rgba(3,22,24,0.22)");
+      c.fillStyle = g; c.beginPath(); c.ellipse(x, y, rx, ry, rnd() * Math.PI, 0, Math.PI * 2); c.fill();
+    }
+    return cv;
+  }
+
+  function paintWater(c, W, H, t, s, stones) {
+    const g = c.createLinearGradient(0, 0, W * 0.35, H);
+    g.addColorStop(0, "#0c3034"); g.addColorStop(0.5, "#0f3e3d"); g.addColorStop(1, "#0a2a30");
+    c.fillStyle = g; c.fillRect(0, 0, W, H);
+    if (stones) c.drawImage(stones, 0, 0);
+    c.globalCompositeOperation = "lighter";
+    // slow pools of sunlight
+    for (let i = 0; i < 4; i++) {
+      const x = W * (0.15 + 0.7 * (Math.sin(t * 0.05 + i * 2.1) + 1) / 2), y = (((i * 0.29 + t * 0.01) % 1.3) - 0.15) * H, r = Math.max(W, H) * 0.32;
+      const d = c.createRadialGradient(x, y, 0, x, y, r);
+      d.addColorStop(0, "rgba(120,225,195,0.07)"); d.addColorStop(1, "rgba(120,225,195,0)");
+      c.fillStyle = d; c.fillRect(0, 0, W, H);
+    }
+    // caustics: two families of wavering light lines that cross into a moving net
+    c.lineCap = "round"; c.lineJoin = "round";
+    const net = (rows, vertical) => {
+      const span = vertical ? W : H, len = vertical ? H : W, gap = span / rows, drift = vertical ? 0 : (t * CURRENT * s * 0.7) % gap;
+      for (let j = -1; j <= rows; j++) {
+        const h = (j * 7919 + (vertical ? 3 : 0)) % 97 / 97; // each line wavers its own way
+        const base = j * gap + drift + (h - 0.5) * gap * 0.6 + (vertical ? Math.sin(t * 0.12 + j) * 18 * s : 0);
+        const f1 = (50 + h * 50) * s, f2 = (22 + h * 18) * s, a1 = (9 + h * 10) * s;
+        c.beginPath();
+        for (let q = -20 * s, first = true; q <= len + 20 * s; q += 16 * s, first = false) {
+          const off = base + Math.sin(q / f1 + t * (0.5 + h * 0.5) + j * 1.7) * a1 + Math.sin(q / f2 - t * 1.1 + j) * 6 * s;
+          const [x, y] = vertical ? [off, q] : [q, off];
+          first ? c.moveTo(x, y) : c.lineTo(x, y);
+        }
+        c.strokeStyle = "rgba(160,255,220,0.028)"; c.lineWidth = 10 * s; c.stroke();
+        c.strokeStyle = "rgba(215,255,240,0.045)"; c.lineWidth = (1.2 + h) * s; c.stroke();
+      }
+    };
+    net(Math.max(6, Math.round(H / s / 80)), false);
+    net(Math.max(4, Math.round(W / s / 110)), true);
+    c.globalCompositeOperation = "source-over";
+  }
+  function drawRings(c, x, y, age, big, s) {
+    for (let i = 0; i < 3; i++) {
+      const a = age - i * 0.35;
+      if (a <= 0) continue;
+      const r = a * (big ? 150 : 70) * s, alpha = Math.max(0, 1 - age / 2.6) * (big ? 0.55 : 0.32);
+      c.strokeStyle = `rgba(225,255,242,${alpha})`; c.lineWidth = (big ? 1.8 : 1.2) * s;
+      c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.stroke();
+    }
+  }
+
+  const pond = (() => {
+    const cv = document.getElementById("pond"), c = cv.getContext("2d");
+    const rnd = seeded(20261028);
+    let W = 0, H = 0, s = 1, stones = null, koi = [], drift = [], rings = [], t = 0, last = performance.now();
+    let level = 0, hiddenAt = 0, attract = null, nextDrop = 3, shade = 0;
+    const api = {
+      half: false,
+      dim: 0, // 0 on the home screen; deeper behind ritual text so the words stay readable
+      show(g) { if (g <= 0 && level > 0) hiddenAt = performance.now(); level = g; },
+      get visible() { return level > 0.5; },
+      ripple(cx, cy, big) { rings.push({ x: cx * s, y: cy * s, t0: t, big }); },
+      call(cx, cy) { attract = { x: cx * s, y: cy * s, until: t + 3.5 }; },
+    };
+    function size() {
+      s = Math.min(devicePixelRatio || 1, 2); W = cv.width = innerWidth * s; H = cv.height = innerHeight * s;
+      stones = makeStones(W, H, s, seeded(7));
+      const len = Math.min(Math.min(W, H) * 0.2, 150 * s), n = innerWidth > 900 ? 6 : 4;
+      koi = Array.from({ length: n }, (_, i) => Object.assign(makeKoi(rnd, len * (0.8 + rnd() * 0.35), i), { x: W * (0.15 + rnd() * 0.7), y: H * (0.15 + rnd() * 0.7) }));
+      drift = Array.from({ length: Math.round(W * H / (s * s) / 22000) + 6 }, () => makeDrift(rnd, W, H));
+    }
+    function step(dt) {
+      if (attract && t > attract.until) attract = null;
+      const x0 = api.half ? W / 2 : 0;
+      for (const k of koi) {
+        const m = k.len, dx = attract ? attract.x - k.x : 0, dy = attract ? attract.y - k.y : 0, near = attract && Math.hypot(dx, dy) < m * 0.9;
+        let target = Math.sin(t * k.f + k.k) * 0.7;
+        const steer = (tx, ty, gain) => { const d = Math.atan2(ty - k.y, tx - k.x) - k.a; return Math.max(-1.6, Math.min(1.6, Math.atan2(Math.sin(d), Math.cos(d)) * gain)); };
+        if (attract && !near) target = steer(attract.x, attract.y, 2.2);
+        else if (k.x < x0 + m || k.x > W - m || k.y < m || k.y > H - m) target = steer((x0 + W) / 2, H / 2, 1.5);
+        k.turn += (target - k.turn) * Math.min(1, dt * 1.6);
+        const speed = (attract && !near ? 80 : near ? 18 : 30) * s;
+        k.v += (speed - k.v) * Math.min(1, dt * 1.3);
+        k.a += k.turn * dt * 0.85;
+        k.x += Math.cos(k.a) * k.v * dt; k.y += Math.sin(k.a) * k.v * dt + CURRENT * 0.4 * s * dt;
+        k.phase += dt * (2 + k.v / s / 16);
+        if (k.y > H + m * 1.5) k.y = -m; else if (k.y < -m * 1.5) k.y = H + m;
+        if (k.x > W + m * 1.5) k.x = x0 - m; else if (k.x < x0 - m * 1.5) k.x = W + m;
+      }
+      for (const p of drift) {
+        p.y += CURRENT * p.depth * s * dt; p.x += Math.sin(t * 0.6 + p.ph) * 9 * s * dt; p.rot += p.vr * dt;
+        if (p.y > H + 20 * s) { p.y = -20 * s; p.x = rnd() * W; }
+      }
+      if (t > nextDrop) { rings.push({ x: (api.half ? 0.5 + rnd() * 0.5 : rnd()) * W, y: rnd() * H, t0: t, big: false }); nextDrop = t + 3 + rnd() * 4; }
+      rings = rings.filter(r => t - r.t0 < 2.6);
+    }
+    function draw() {
+      paintWater(c, W, H, t, s, stones);
+      for (const p of drift) if (p.depth < 1) drawDrift(c, p, s);
+      for (const k of koi) drawKoi(c, k, s);
+      for (const p of drift) if (p.depth >= 1) drawDrift(c, p, s);
+      for (const r of rings) drawRings(c, r.x, r.y, t - r.t0, r.big, s);
+      if (shade > 0.01) { c.fillStyle = `rgba(5,22,26,${shade.toFixed(3)})`; c.fillRect(0, 0, W, H); }
+    }
+    function frame(now) {
+      const dt = Math.min(0.05, (now - last) / 1000); last = now;
+      if (level > 0 || now - hiddenAt < 1600) { const d = reduced ? 0 : dt; t += d; shade += (api.dim - shade) * Math.min(1, reduced ? 1 : dt * 2.5); step(d); draw(); }
+      requestAnimationFrame(frame);
+    }
+    addEventListener("resize", size); size(); requestAnimationFrame(frame);
     return api;
   })();
 
@@ -945,7 +1146,8 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
       const mark = s => {
         if (prefs.side !== s) { prefs.side = s; savePrefs(); }
         tabs.forEach(t => t.setAttribute("aria-selected", String(t.dataset.side === s)));
-        if (wide.matches) setDawn(0, 0.35); else s === "tap" ? setDawn(0, 1) : setDawn(0);
+        pond.half = wide.matches; root.classList.toggle("pond-half", wide.matches);
+        wide.matches || s === "tap" ? setDawn(0, 1) : setDawn(0);
       };
       const go = (s, smooth) => {
         mark(s);
@@ -1058,46 +1260,6 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
       } };
   }
 
-  // The current: one path the river follows, in a 320×210 box; the tap point sits on it at (160, 105).
-  const RIVER = [[-40, 150], [40, 165], [90, 70], [160, 105], [230, 140], [275, 50], [360, 72]];
-  function riverHTML() {
-    const d = `M ${RIVER[0]} C ${RIVER[1]} ${RIVER[2]} ${RIVER[3]} C ${RIVER[4]} ${RIVER[5]} ${RIVER[6]}`;
-    let seed = 7;
-    const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
-    const twinkles = Array.from({ length: 18 }, () => `<circle class="tw" cx="${(rnd() * 320).toFixed(1)}" cy="${(24 + rnd() * 162).toFixed(1)}" r="${(0.6 + rnd() * 1.3).toFixed(2)}" style="animation-delay:${(rnd() * 3.2).toFixed(2)}s"/>`).join("");
-    return `
-      <button class="river" id="river" type="button" aria-label="Tap into the current">
-        <svg viewBox="0 0 320 210" aria-hidden="true">
-          <defs>
-            <linearGradient id="rv-g" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="320" y2="0">
-              <stop offset="0" stop-color="#7d67d0" stop-opacity="0"/>
-              <stop offset="0.22" stop-color="#8f7ad6"/>
-              <stop offset="0.5" stop-color="#f4c46a"/>
-              <stop offset="0.78" stop-color="#9fd2ff"/>
-              <stop offset="1" stop-color="#9fd2ff" stop-opacity="0"/>
-            </linearGradient>
-            <radialGradient id="rv-n"><stop offset="0" stop-color="#fffdf3"/><stop offset="0.35" stop-color="#fff0c6"/><stop offset="0.7" stop-color="#f4c46a" stop-opacity="0.5"/><stop offset="1" stop-color="#f4c46a" stop-opacity="0"/></radialGradient>
-            <filter id="rv-blur" x="-10%" y="-80%" width="120%" height="260%"><feGaussianBlur stdDeviation="9"/></filter>
-            <linearGradient id="rv-f" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#000"/><stop offset="0.16" stop-color="#fff"/><stop offset="0.84" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient>
-            <mask id="rv-m" maskUnits="userSpaceOnUse" x="0" y="0" width="320" height="210"><rect width="320" height="210" fill="url(#rv-f)"/></mask>
-            <path id="rv-p" d="${d}"/>
-          </defs>
-          ${twinkles}
-          <g mask="url(#rv-m)">
-          <use href="#rv-p" class="glow" fill="none" stroke="url(#rv-g)" stroke-width="54" filter="url(#rv-blur)"/>
-          <use href="#rv-p" class="band" fill="none" stroke="url(#rv-g)" stroke-width="14" stroke-linecap="round"/>
-          <use href="#rv-p" class="thread" fill="none" stroke="url(#rv-g)" stroke-width="2"/>
-          <use href="#rv-p" class="stars s1"/>
-          <use href="#rv-p" class="stars s2" transform="translate(0 -6)"/>
-          <use href="#rv-p" class="stars s3" transform="translate(0 7)"/>
-          </g>
-          <circle class="ring2" cx="160" cy="105" r="12"/>
-          <circle class="ring2 late" cx="160" cy="105" r="12"/>
-          <circle class="node" cx="160" cy="105" r="18" fill="url(#rv-n)"/>
-        </svg>
-      </button>`;
-  }
-
   function tapPanel() {
     const title = `<p class="side-title">Tap In</p>`;
     if (!S.attune) return {
@@ -1127,7 +1289,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
         </div>` : ""}
       <div class="today-line"><p class="eyebrow">Today's possibility</p><span>${esc(line)}</span></div>
       <div class="ember-wrap">
-        ${riverHTML()}
+        <button class="spring" id="spring" type="button" aria-label="Tap the water to tap in"><span class="ring"></span><span class="ring"></span><span class="ring"></span><span class="dot"></span></button>
       </div>
       <div class="hold-label">
         <strong>Tap in</strong>
@@ -1140,13 +1302,15 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
       bind: el => {
         el.querySelector("#flowBtn").onclick = flowView;
         el.querySelector("#attuneBtn").onclick = () => attuneView();
-        const river = el.querySelector("#river");
-        river.onclick = () => {
-          if (river.classList.contains("on")) return;
+        const spring = el.querySelector("#spring");
+        spring.onclick = () => {
+          if (spring.classList.contains("on")) return;
           touchStart();
-          river.classList.add("on"); el.querySelector(".hold-label strong").textContent = "Tapping in";
-          vibrate([20, 40, 20]); embers.burst(90, 38); audio.chord([329.6, 415.3, 493.9, 659.3], 0.06, 0.2, 3);
-          setTimeout(beginTapIn, 1000);
+          const b = spring.getBoundingClientRect(), cx = b.left + b.width / 2, cy = b.top + b.height / 2;
+          pond.ripple(cx, cy, true); pond.call(cx, cy);
+          spring.classList.add("on"); el.querySelector(".hold-label strong").textContent = "Tapping in";
+          vibrate([20, 40, 20]); audio.chord([329.6, 415.3, 493.9, 659.3], 0.06, 0.2, 3);
+          setTimeout(beginTapIn, 1500);
         };
         if (ask) {
           el.querySelector("#found").onclick = () => foundScene(ask, home);
@@ -1646,61 +1810,45 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
     await Promise.race([Promise.all(fonts.map(f => document.fonts.load(f).catch(() => null))), new Promise(r => setTimeout(r, 2500))]);
     let seed = card.seed * 9301 + 49297;
     const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
-    // sky
-    const sky = x.createLinearGradient(0, 0, 0, H);
-    if (light) { sky.addColorStop(0, "#3a2c4e"); sky.addColorStop(0.45, "#1d1733"); sky.addColorStop(1, "#120f24"); }
-    else { sky.addColorStop(0, "#0e0b1c"); sky.addColorStop(0.5, card.title === "RISEN" ? "#2a1a40" : "#34204a"); sky.addColorStop(1, card.title === "RISEN" ? "#6a2f4f" : "#7a3448"); }
-    x.fillStyle = sky; x.fillRect(0, 0, W, H);
-    const glow = light ? x.createRadialGradient(W / 2, -H * 0.08, 0, W / 2, -H * 0.08, H * 0.8) : x.createRadialGradient(W / 2, H * 1.08, 0, W / 2, H * 1.08, H * 0.75);
-    if (light) { glow.addColorStop(0, "rgba(255,232,170,0.6)"); glow.addColorStop(0.4, "rgba(244,196,106,0.2)"); glow.addColorStop(1, "rgba(244,196,106,0)"); }
-    else { glow.addColorStop(0, "rgba(255,178,107,0.85)"); glow.addColorStop(0.35, "rgba(255,140,72,0.45)"); glow.addColorStop(0.7, "rgba(196,86,106,0.18)"); glow.addColorStop(1, "rgba(59,37,80,0)"); }
-    x.fillStyle = glow; x.fillRect(0, 0, W, H);
-    // the ember, or the pool of light with its ripples
     const ex = W / 2, ey = 360;
-    const halo = x.createRadialGradient(ex, ey, 0, ex, ey, 300);
-    halo.addColorStop(0, light ? "rgba(244,196,106,0.45)" : "rgba(255,123,62,0.55)"); halo.addColorStop(1, light ? "rgba(244,196,106,0)" : "rgba(255,123,62,0)");
-    x.fillStyle = halo; x.fillRect(0, 0, W, H);
-    x.globalCompositeOperation = "lighter";
     if (light) {
-      // the current: the same river as the Tap In side, crossing the card, with stars flowing along it
-      const k = W / 320, oy = ey - 105 * k, P = RIVER.map(([a, b]) => [a * k, b * k + oy]);
-      const at = t => {
-        const q = t < 0.5 ? P.slice(0, 4) : P.slice(3, 7), u = t < 0.5 ? t * 2 : t * 2 - 1, m = 1 - u;
-        return [0, 1].map(i => m * m * m * q[0][i] + 3 * m * m * u * q[1][i] + 3 * m * u * u * q[2][i] + u * u * u * q[3][i]);
-      };
-      const grad = x.createLinearGradient(0, 0, W, 0);
-      [[0, "rgba(125,103,208,0)"], [0.22, "#8f7ad6"], [0.5, "#f4c46a"], [0.78, "#9fd2ff"], [1, "rgba(159,210,255,0)"]].forEach(([o, c]) => grad.addColorStop(o, c));
-      x.strokeStyle = grad; x.lineCap = "round";
-      [[220, 0.05], [150, 0.07], [90, 0.11], [48, 0.4], [7, 0.9]].forEach(([w, a]) => {
-        x.globalAlpha = a; x.lineWidth = w;
-        x.beginPath(); x.moveTo(...P[0]); x.bezierCurveTo(...P[1], ...P[2], ...P[3]); x.bezierCurveTo(...P[4], ...P[5], ...P[6]); x.stroke();
+      // the koi stream: two koi circling each other around ripples, petals on the current
+      const s = W / 390;
+      paintWater(x, W, H, card.seed * 1.7, s, makeStones(W, H, s, seeded(card.seed + 11)));
+      for (let i = 0; i < 14; i++) { const p = makeDrift(rnd, W, H * 0.62); if (!p.fleck || i % 2) drawDrift(x, p, s); }
+      drawRings(x, ex, ey, 1.25, true, s * 0.95);
+      const R = 120, th = rnd() * Math.PI * 2;
+      [0, 1].forEach(i => {
+        const k = makeKoi(rnd, 270, i), a = th + i * Math.PI;
+        Object.assign(k, { x: ex + Math.cos(a) * R, y: ey + Math.sin(a) * R, a: a + Math.PI / 2, turn: -1.25, phase: 1.2 + i });
+        drawKoi(x, k, s);
       });
-      x.globalAlpha = 1;
-      for (let i = 0; i < 260; i++) {
-        const t = rnd(), [px, py0] = at(t), py = py0 + (rnd() - 0.5) * 80 * (0.25 + rnd()), r = 1.4 + rnd() * 3.6, a = 0.3 + rnd() * 0.6;
-        const mid = t > 0.35 && t < 0.65, hue = mid ? 42 : t < 0.5 ? 255 : 205;
-        const g = x.createRadialGradient(px, py, 0, px, py, r * 3);
-        g.addColorStop(0, `hsla(${hue},${mid ? 100 : 85}%,84%,${a})`); g.addColorStop(1, `hsla(${hue},100%,60%,0)`);
-        x.fillStyle = g; x.beginPath(); x.arc(px, py, r * 3, 0, Math.PI * 2); x.fill();
-      }
-      const node = x.createRadialGradient(ex, ey, 0, ex, ey, 70);
-      node.addColorStop(0, "#fffdf3"); node.addColorStop(0.3, "#fff0c6"); node.addColorStop(0.65, "rgba(244,196,106,0.5)"); node.addColorStop(1, "rgba(244,196,106,0)");
-      x.fillStyle = node; x.beginPath(); x.arc(ex, ey, 70, 0, Math.PI * 2); x.fill();
-      x.globalCompositeOperation = "source-over";
-      [72, 112].forEach((r, i) => { x.strokeStyle = `rgba(244,196,106,${0.45 - i * 0.2})`; x.lineWidth = 2; x.beginPath(); x.arc(ex, ey, r, 0, Math.PI * 2); x.stroke(); });
+      const fade = x.createLinearGradient(0, 560, 0, H);
+      fade.addColorStop(0, "rgba(7,28,32,0)"); fade.addColorStop(0.3, "rgba(7,28,32,0.72)"); fade.addColorStop(1, "rgba(6,24,28,0.9)");
+      x.fillStyle = fade; x.fillRect(0, 560, W, H - 560);
     } else {
+      const sky = x.createLinearGradient(0, 0, 0, H);
+      sky.addColorStop(0, "#0e0b1c"); sky.addColorStop(0.5, card.title === "RISEN" ? "#2a1a40" : "#34204a"); sky.addColorStop(1, card.title === "RISEN" ? "#6a2f4f" : "#7a3448");
+      x.fillStyle = sky; x.fillRect(0, 0, W, H);
+      const glow = x.createRadialGradient(W / 2, H * 1.08, 0, W / 2, H * 1.08, H * 0.75);
+      glow.addColorStop(0, "rgba(255,178,107,0.85)"); glow.addColorStop(0.35, "rgba(255,140,72,0.45)"); glow.addColorStop(0.7, "rgba(196,86,106,0.18)"); glow.addColorStop(1, "rgba(59,37,80,0)");
+      x.fillStyle = glow; x.fillRect(0, 0, W, H);
+      const halo = x.createRadialGradient(ex, ey, 0, ex, ey, 300);
+      halo.addColorStop(0, "rgba(255,123,62,0.55)"); halo.addColorStop(1, "rgba(255,123,62,0)");
+      x.fillStyle = halo; x.fillRect(0, 0, W, H);
       const core = x.createRadialGradient(ex, ey + 14, 0, ex, ey, 120);
       core.addColorStop(0, "#fff3d6"); core.addColorStop(0.18, "#f4c46a"); core.addColorStop(0.45, "#ff7b3e"); core.addColorStop(0.7, "rgba(196,60,40,0.85)"); core.addColorStop(1, "rgba(120,30,40,0)");
       x.fillStyle = core; x.beginPath(); x.arc(ex, ey, 120, 0, Math.PI * 2); x.fill();
       // sparks rising off the ember
+      x.globalCompositeOperation = "lighter";
       for (let i = 0; i < 110; i++) {
         const px = ex + (rnd() - 0.5) * 760 * rnd(), py = ey + 60 - rnd() * 420, r = 2 + rnd() * 5, a = 0.25 + rnd() * 0.6;
         const g = x.createRadialGradient(px, py, 0, px, py, r * 3);
         g.addColorStop(0, `hsla(${18 + rnd() * 28},100%,70%,${a})`); g.addColorStop(1, "hsla(30,100%,50%,0)");
         x.fillStyle = g; x.beginPath(); x.arc(px, py, r * 3, 0, Math.PI * 2); x.fill();
       }
+      x.globalCompositeOperation = "source-over";
     }
-    x.globalCompositeOperation = "source-over";
     // text
     x.textAlign = "center"; x.textBaseline = "alphabetic";
     const widthOf = (t, em) => { const gap = parseFloat(/(\d+)px/.exec(x.font)[1]) * em, chars = [...t]; return chars.reduce((s, ch) => s + x.measureText(ch).width, 0) + gap * (chars.length - 1); };
@@ -1717,7 +1865,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
     x.font = `${size}px Marcellus`;
     while (size > 80 && widthOf(card.title, 0.18) > 940) x.font = `${size -= 6}px Marcellus`;
     x.fillStyle = "#fff4e2";
-    x.shadowColor = light ? "rgba(255,226,150,0.6)" : "rgba(255,170,90,0.6)"; x.shadowBlur = 50;
+    x.shadowColor = light ? "rgba(190,255,235,0.45)" : "rgba(255,170,90,0.6)"; x.shadowBlur = 50;
     spaced(card.title, 850, 0.18);
     x.shadowBlur = 0;
     x.font = "500 26px Jost"; x.fillStyle = "#f4c46a";
@@ -2272,6 +2420,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
   }
 
   // ================= boot =================
+  addEventListener("pointerdown", e => { if (pond.visible && (!pond.half || e.clientX > innerWidth / 2)) pond.ripple(e.clientX, e.clientY, false); }, { passive: true });
   document.getElementById("homeBtn").onclick = () => { if (view !== "home") home(); };
   sync.onPulled = () => {
     const views = { home, saga: sagaView, letters: lettersView, flow: flowView, myth: () => S.myth ? mythView() : home(), attune: () => S.attune ? attuneView() : home() };
