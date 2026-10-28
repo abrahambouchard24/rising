@@ -319,6 +319,41 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
 .letter-card { display: flex; flex-direction: column; gap: 8px; padding-block: 18px; border-top: 1px solid var(--line); min-width: 0; }
 .letter-card p { white-space: pre-wrap; overflow-wrap: anywhere; font-style: italic; font-weight: 300; }
 .letter-card .clip { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.saga .card-btn { align-self: flex-start; font-size: 0.68rem; padding: 4px 0; }
+
+/* What the saga shows */
+.mirror {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--field);
+}
+.mirror ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.mirror li { overflow-wrap: anywhere; padding-left: 24px; position: relative; }
+.mirror li::before { content: "✦"; color: var(--ember); font-size: 0.7em; position: absolute; left: 0; top: 0.45em; }
+
+/* Your myth */
+.myth { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.myth li { display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: start; padding-block: 16px; border-top: 1px solid var(--line); }
+.myth .body { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.myth .label { font-family: var(--label); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ash); }
+.myth .val { white-space: pre-wrap; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.myth .empty { color: var(--ash); font-style: italic; }
+.myth .ghost { padding: 2px 4px; }
+
+/* Chapter card */
+.card-preview {
+  display: block;
+  width: 100%;
+  max-width: 22rem;
+  aspect-ratio: 4 / 5;
+  margin-inline: auto;
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px var(--line);
+}
 
 @media (prefers-reduced-motion: reduce) {
   .scene, .big-list li { animation: none; opacity: 1; }
@@ -467,15 +502,15 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
   const SAMPLE_LETTER = "Hey. If you're reading this, you're tired and you think the fire's gone. It isn't. You've just been spending it without feeding it.\n\nYou don't have to win today. You just have to take one step that the real you would take. Then another.\n\nI'm proud of you for opening this instead of disappearing. That's the whole thing. That's the rise.";
 
   const FORGE = [
-    { key: "name", q: "What does your saga call you?", hint: "Your name, or the name you'd give your hero.", type: "line", ph: "Name" },
-    { key: "toward", q: "What are you rising toward?", hint: "The things you want with your whole chest. One per line.", type: "text", ph: "A body that feels like armor\nThe work I was made for" },
-    { key: "future", q: "Describe the you who made it.", hint: "Picture yourself a few years out, fully alive. What does a day look like? How do you carry yourself?", type: "text", ph: "I wake up and…" },
-    { key: "origin", q: "Where did you come from?", hint: "What have you already survived to be standing here?", type: "text", ph: "The year I…" },
-    { key: "victory", q: "When were you unstoppable?", hint: "One moment you were fully alive. Describe it like you're back there.", type: "text", ph: "I remember…" },
-    { key: "carry", q: "Who do you carry?", hint: "The people you rise for, living or gone. One per line.", type: "text", ph: "My mother\nThe kid I used to be" },
-    { key: "ancestors", q: "Who stands behind you?", hint: "The ones whose strength runs in you: family, lineage, teachers, heroes. One per line.", type: "text", ph: "My grandmother, who…" },
-    { key: "gratitude", q: "What in your life now would you hate to lose?", hint: "Small or huge. One per line.", type: "text", ph: "Morning light in the kitchen" },
-    { key: "shadow", q: "Name your shadow.", hint: "The pattern that pulls you under when you start to fade. Naming it takes its mask off.", type: "line", ph: "The scroll, the 'just one more'…" },
+    { key: "name", label: "Your name", q: "What does your saga call you?", hint: "Your name, or the name you'd give your hero.", type: "line", ph: "Name" },
+    { key: "toward", label: "Rising toward", list: true, q: "What are you rising toward?", hint: "The things you want with your whole chest. One per line.", type: "text", ph: "A body that feels like armor\nThe work I was made for" },
+    { key: "future", label: "The you who made it", q: "Describe the you who made it.", hint: "Picture yourself a few years out, fully alive. What does a day look like? How do you carry yourself?", type: "text", ph: "I wake up and…" },
+    { key: "origin", label: "Where you came from", q: "Where did you come from?", hint: "What have you already survived to be standing here?", type: "text", ph: "The year I…" },
+    { key: "victory", label: "When you were unstoppable", q: "When were you unstoppable?", hint: "One moment you were fully alive. Describe it like you're back there.", type: "text", ph: "I remember…" },
+    { key: "carry", label: "Who you carry", list: true, q: "Who do you carry?", hint: "The people you rise for, living or gone. One per line.", type: "text", ph: "My mother\nThe kid I used to be" },
+    { key: "ancestors", label: "Who stands behind you", list: true, q: "Who stands behind you?", hint: "The ones whose strength runs in you: family, lineage, teachers, heroes. One per line.", type: "text", ph: "My grandmother, who…" },
+    { key: "gratitude", label: "What you'd hate to lose", list: true, q: "What in your life now would you hate to lose?", hint: "Small or huge. One per line.", type: "text", ph: "Morning light in the kitchen" },
+    { key: "shadow", label: "Your shadow", q: "Name your shadow.", hint: "The pattern that pulls you under when you start to fade. Naming it takes its mask off.", type: "line", ph: "The scroll, the 'just one more'…" },
     { key: "letter", q: "Write to yourself on the day you fade.", hint: "Right now you have fire. The future you reading this won't. Tell them what they need to hear, in writing, in your own voice, or both.", type: "letter" },
   ];
 
@@ -783,12 +818,12 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
       <div class="actions" style="justify-content:center">
         <button class="ghost" id="sagaBtn" type="button">Your saga${S.saga.length ? ` · ${S.saga.length}` : ""}</button>
         <button class="ghost" id="lettersBtn" type="button">Letters${S.letters.length ? ` · ${S.letters.length}` : ""}</button>
-        <button class="ghost" id="reforge" type="button">${S.sample ? "Forge my own" : "Reforge"}</button>
+        <button class="ghost" id="mythBtn" type="button">${S.sample ? "Forge my own" : "Your myth"}</button>
       </div>`, el => {
       el.classList.add("center");
       el.querySelector("#sagaBtn").onclick = sagaView;
       el.querySelector("#lettersBtn").onclick = lettersView;
-      el.querySelector("#reforge").onclick = () => forge(0, S.sample ? {} : { ...S.myth });
+      el.querySelector("#mythBtn").onclick = () => S.sample ? forge(0, {}) : mythView();
       el.querySelectorAll(".mode").forEach(b => b.onclick = () => {
         if (b.dataset.mode === prefs.mode) return;
         prefs.mode = b.dataset.mode; savePrefs(); unkept = null; home();
@@ -837,16 +872,19 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
   }
 
   // ================= forging =================
+  const mythFieldHTML = (f, val) => f.type === "line"
+    ? `<input type="text" id="forge-${f.key}" value="${esc(val)}" placeholder="${esc(f.ph)}" autocomplete="off" autofocus>`
+    : `<textarea id="forge-${f.key}" placeholder="${esc(f.ph)}" autofocus>${esc(val)}</textarea>`;
+
   function forge(i, draft) {
     setDawn(i / FORGE.length * 0.35);
     const f = FORGE[i];
     const reforging = !!S.myth && !S.sample;
     const val = draft[f.key] || "";
     const meter = FORGE.map((_, j) => `<span class="${j <= i ? "on" : ""}"></span>`).join("");
-    let field;
-    if (f.type === "line") field = `<input type="text" id="forge-${f.key}" value="${esc(val)}" placeholder="${esc(f.ph)}" autocomplete="off" autofocus>`;
-    else if (f.type === "letter") field = `<textarea id="forge-letter" class="tall" placeholder="Hey. If you're reading this…" autofocus>${esc(draft.letter || "")}</textarea>${voiceFieldHTML("fl")}`;
-    else field = `<textarea id="forge-${f.key}" placeholder="${esc(f.ph)}" autofocus>${esc(val)}</textarea>`;
+    const field = f.type === "letter"
+      ? `<textarea id="forge-letter" class="tall" placeholder="Hey. If you're reading this…" autofocus>${esc(draft.letter || "")}</textarea>${voiceFieldHTML("fl")}`
+      : mythFieldHTML(f, val);
     const q = f.type === "letter" && reforging ? "Write another letter for the day you fade." : f.q;
     const hint = f.type === "letter" && reforging ? `Your ${S.letters.length === 1 ? "first letter stays" : `${S.letters.length} letters stay`} in the library. This one is optional.` : f.hint;
     render(`
@@ -887,6 +925,66 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
       <p class="lede">Close this and live. The next time you feel the fire running low, come back and hold the ember. Everything you gave today will be waiting.</p>
       <div class="actions"><button class="btn" id="go" type="button">Return to the ember</button></div>`,
       el => { el.querySelector("#go").onclick = home; });
+  }
+
+  // ================= your myth: change one part at a time =================
+  function mythView(changed) {
+    wake.off();
+    setDawn(0.25);
+    const m = S.myth;
+    const rows = FORGE.filter(f => f.type !== "letter").map(f => {
+      const v = f.list ? lines(m[f.key]).join("\n") : String(m[f.key] || "").trim();
+      return `
+      <li>
+        <div class="body">
+          <span class="label">${esc(f.label)}</span>
+          ${v ? `<span class="val">${esc(v)}</span>` : `<span class="empty">Not written yet</span>`}
+          ${f.key === changed ? `<span class="chip carried">Changed</span>` : ""}
+        </div>
+        <button class="ghost" data-edit="${f.key}" type="button" aria-label="Change ${esc(f.label.toLowerCase())}">${v ? "Change" : "Write"}</button>
+      </li>`;
+    }).join("");
+    render(`
+      <p class="eyebrow">The myth of ${esc(m.name || "you")}</p>
+      <h2>Your myth.</h2>
+      <p class="lede">You'll change, so it can too. Change any part on its own. Your saga and letters stay as they are.</p>
+      <ul class="myth">${rows}</ul>
+      <div class="actions">
+        <button class="btn" id="back" type="button">Back to the ember</button>
+        <button class="ghost" id="reforge" type="button">Reforge from the start</button>
+      </div>
+      <p class="fine">Forged ${esc(fmtDate(m.forgedAt || Date.now()))}${m.editedAt ? ` · Last changed ${esc(fmtDate(m.editedAt))}` : ""}</p>`, el => {
+      el.querySelector("#back").onclick = home;
+      el.querySelector("#reforge").onclick = () => forge(0, { ...S.myth });
+      el.querySelectorAll("[data-edit]").forEach(b => b.onclick = () => editMyth(b.dataset.edit));
+    }, "myth");
+  }
+
+  function editMyth(key) {
+    const f = FORGE.find(x => x.key === key);
+    setDawn(0.3);
+    render(`
+      <p class="eyebrow">Your myth · ${esc(f.label)}</p>
+      <h2>${esc(f.q)}</h2>
+      <p class="lede">${esc(f.hint)}</p>
+      ${mythFieldHTML(f, S.myth[key] || "")}
+      <div class="actions">
+        <button class="btn" id="save" type="button">Save</button>
+        <button class="ghost" id="cancel" type="button">Cancel</button>
+      </div>`, el => {
+      const input = el.querySelector(`#forge-${key}`);
+      el.querySelector("#cancel").onclick = () => mythView();
+      el.querySelector("#save").onclick = () => {
+        const v = input.value.trim();
+        if (v !== String(S.myth[key] || "").trim()) {
+          S.myth[key] = v; S.myth.editedAt = Date.now(); save();
+          embers.burst(30); audio.chord([220, 329.6, 440], 0.04, 0.3, 2.5);
+          return mythView(key);
+        }
+        mythView();
+      };
+      if (f.type === "line") input.addEventListener("keydown", e => { if (e.key === "Enter") el.querySelector("#save").click(); });
+    }, "edit");
   }
 
   // ================= shared scenes =================
@@ -1185,6 +1283,10 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
     if (S.saga.length > 600) S.saga = S.saga.slice(-600);
     save();
     setDawn(1); embers.burst(160); vibrate([40, 60, 40, 60, 120]); audio.risen();
+    risenScreen(ch);
+  }
+  function risenScreen(ch) {
+    setDawn(1);
     const fading = ch.mode === "fading";
     render(`
       <p class="eyebrow">Chapter ${roman(ch.n)} · ${esc(fmtDate(ch.at))}</p>
@@ -1192,18 +1294,192 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
       <p class="lede">${fading ? `Your vow is <em>${esc(ch.vow)}</em>.<br>Close this and go do it.` : `You'll feed it with <em>${esc(ch.vow)}</em>.<br>Keep going.`}</p>
       <div class="actions">
         <button class="btn" id="done" type="button">I'm going</button>
+        <button class="ghost" id="cardBtn" type="button">Share as image</button>
         <button class="ghost" id="sagaBtn" type="button">Read your saga</button>
       </div>`, el => {
       el.classList.add("center");
       el.querySelector("#done").onclick = home;
+      el.querySelector("#cardBtn").onclick = () => cardView(ch, () => risenScreen(ch));
       el.querySelector("#sagaBtn").onclick = sagaView;
     }, "risen");
+  }
+
+  // ================= chapter card (an image to keep or share) =================
+  // claude.ai saves through the downloads capability; the installed app uses the
+  // share sheet where there is one, and a plain download everywhere else.
+  const downloadsP = window.claude && typeof window.claude.use === "function"
+    ? Promise.resolve(window.claude.use("downloads")).catch(() => null) : Promise.resolve(null);
+
+  async function chapterCard(ch) {
+    const W = 1080, H = 1350, c = document.createElement("canvas");
+    c.width = W; c.height = H;
+    const x = c.getContext("2d"), fading = ch.mode === "fading";
+    const fonts = ["150px Marcellus", "34px Marcellus", "italic 300 54px Spectral", "500 28px Jost"];
+    await Promise.race([Promise.all(fonts.map(f => document.fonts.load(f).catch(() => null))), new Promise(r => setTimeout(r, 2500))]);
+    let seed = ch.n * 9301 + 49297;
+    const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+    // sky
+    const sky = x.createLinearGradient(0, 0, 0, H);
+    sky.addColorStop(0, "#0e0b1c"); sky.addColorStop(0.5, fading ? "#2a1a40" : "#34204a"); sky.addColorStop(1, fading ? "#6a2f4f" : "#7a3448");
+    x.fillStyle = sky; x.fillRect(0, 0, W, H);
+    const dawn = x.createRadialGradient(W / 2, H * 1.08, 0, W / 2, H * 1.08, H * 0.75);
+    dawn.addColorStop(0, "rgba(255,178,107,0.85)"); dawn.addColorStop(0.35, "rgba(255,140,72,0.45)"); dawn.addColorStop(0.7, "rgba(196,86,106,0.18)"); dawn.addColorStop(1, "rgba(59,37,80,0)");
+    x.fillStyle = dawn; x.fillRect(0, 0, W, H);
+    // ember
+    const ex = W / 2, ey = 360;
+    const halo = x.createRadialGradient(ex, ey, 0, ex, ey, 300);
+    halo.addColorStop(0, "rgba(255,123,62,0.55)"); halo.addColorStop(1, "rgba(255,123,62,0)");
+    x.fillStyle = halo; x.fillRect(0, 0, W, H);
+    const core = x.createRadialGradient(ex, ey + 14, 0, ex, ey, 120);
+    core.addColorStop(0, "#fff3d6"); core.addColorStop(0.18, "#f4c46a"); core.addColorStop(0.45, "#ff7b3e"); core.addColorStop(0.7, "rgba(196,60,40,0.85)"); core.addColorStop(1, "rgba(120,30,40,0)");
+    x.fillStyle = core; x.beginPath(); x.arc(ex, ey, 120, 0, Math.PI * 2); x.fill();
+    // sparks rising off it
+    x.globalCompositeOperation = "lighter";
+    for (let i = 0; i < 110; i++) {
+      const px = ex + (rnd() - 0.5) * 760 * rnd(), py = ey + 60 - rnd() * 420, r = 2 + rnd() * 5, a = 0.25 + rnd() * 0.6;
+      const g = x.createRadialGradient(px, py, 0, px, py, r * 3);
+      g.addColorStop(0, `hsla(${18 + rnd() * 28},100%,70%,${a})`); g.addColorStop(1, "hsla(30,100%,50%,0)");
+      x.fillStyle = g; x.beginPath(); x.arc(px, py, r * 3, 0, Math.PI * 2); x.fill();
+    }
+    x.globalCompositeOperation = "source-over";
+    // text
+    x.textAlign = "center"; x.textBaseline = "alphabetic";
+    const spaced = (t, y, em) => {
+      const gap = parseFloat(/(\d+)px/.exec(x.font)[1]) * em, chars = [...t];
+      const w = chars.reduce((s, ch) => s + x.measureText(ch).width, 0) + gap * (chars.length - 1);
+      let cx = W / 2 - w / 2;
+      x.textAlign = "left";
+      for (const chr of chars) { x.fillText(chr, cx, y); cx += x.measureText(chr).width + gap; }
+      x.textAlign = "center";
+    };
+    x.font = "500 28px Jost"; x.fillStyle = "#a99fbb";
+    spaced(`CHAPTER ${roman(ch.n)} · ${fmtDate(ch.at).toUpperCase()}`, 680, 0.24);
+    x.font = "150px Marcellus"; x.fillStyle = "#fff4e2";
+    x.shadowColor = "rgba(255,170,90,0.6)"; x.shadowBlur = 50;
+    spaced(fading ? "RISEN" : "BURNING", 850, 0.18);
+    x.shadowBlur = 0;
+    x.font = "500 26px Jost"; x.fillStyle = "#f4c46a";
+    spaced(fading ? "VOWED" : "FED IT WITH", 960, 0.24);
+    x.font = "italic 300 54px Spectral"; x.fillStyle = "#f4ede3";
+    const words = String(ch.vow || "").split(/\s+/).filter(Boolean), out = [];
+    let line = "";
+    for (const w of words) {
+      const t = line ? line + " " + w : w;
+      if (x.measureText(`“${t}”`).width > 860 && line) { out.push(line); line = w; } else line = t;
+    }
+    if (line) out.push(line);
+    if (out.length > 3) { out.length = 3; out[2] = out[2].replace(/\s*\S*$/, "") + "…"; }
+    out.forEach((l, i) => x.fillText(`${i === 0 ? "“" : ""}${l}${i === out.length - 1 ? "”" : ""}`, W / 2, 1040 + i * 70));
+    x.font = "34px Marcellus"; x.fillStyle = "#f4c46a";
+    spaced("RISING", H - 90, 0.42);
+    return new Promise((res, rej) => c.toBlob(b => b ? res(b) : rej(new Error("no image")), "image/png"));
+  }
+
+  function cardView(ch, back) {
+    setDawn(0.6);
+    const name = `rising-chapter-${roman(ch.n).toLowerCase()}.png`;
+    render(`
+      <p class="eyebrow">Chapter ${roman(ch.n)} · ${esc(fmtDate(ch.at))}</p>
+      <img class="card-preview" id="card" alt="Chapter ${roman(ch.n)} card: ${ch.mode === "fading" ? "Risen" : "Burning"}, ${esc(ch.vow)}" hidden>
+      <p class="lede" id="cardMsg">Making your card…</p>
+      <div class="actions">
+        <button class="btn" id="saveCard" type="button" disabled>Save image</button>
+        <button class="ghost" id="back" type="button">Back</button>
+      </div>`, async el => {
+      el.classList.add("center");
+      el.querySelector("#back").onclick = back;
+      const img = el.querySelector("#card"), msg = el.querySelector("#cardMsg"), btn = el.querySelector("#saveCard");
+      let blob;
+      try { blob = await chapterCard(ch); } catch { msg.textContent = "This browser couldn't draw the card."; return; }
+      if (!el.isConnected) return;
+      const url = URL.createObjectURL(blob);
+      cleanup.push(() => URL.revokeObjectURL(url));
+      img.src = url; img.hidden = false;
+      const file = typeof File === "function" ? new File([blob], name, { type: "image/png" }) : null;
+      const dl = await downloadsP;
+      const canShare = !dl && file && navigator.canShare && navigator.canShare({ files: [file] });
+      btn.textContent = canShare ? "Share image" : "Save image";
+      msg.textContent = "Only the vow is on it. What you rose from stays private.";
+      btn.disabled = false;
+      btn.onclick = async () => {
+        btn.disabled = true;
+        try {
+          if (dl) { await dl.save({ filename: name, data: blob }); msg.textContent = "Saved."; }
+          else if (canShare) { await navigator.share({ files: [file], title: "RISING" }); }
+          else {
+            const a = document.createElement("a"); a.href = url; a.download = name;
+            document.body.appendChild(a); a.click(); a.remove();
+            msg.textContent = "Saved to your downloads.";
+          }
+        } catch (e) {
+          const code = e && (e.code || e.name);
+          if (code === "unavailable" || code === "not_granted" || code === "capability_disabled" || code === "capability_removed") msg.textContent = "Saving isn't available here. Press and hold the card to save it.";
+          else if (code === "rate_limited") msg.textContent = "One moment, then try again.";
+        }
+        btn.disabled = false;
+      };
+    }, "card");
   }
 
   // ================= saga =================
   const syncNote = () => sync.status === "synced"
     ? "Your myth, letters and saga sync to your Claude account. Voice clips stay on the device that recorded them."
     : "Saved in this browser only.";
+
+  // Patterns in what dimmed you, when you fade, and how vows carry. Each line only
+  // appears once there's enough saga behind it to mean something.
+  const STOP = new Set(("a an and or but the i im ive id me my mine myself to of in on at for with from by is was were be been being am are " +
+    "it its that this these those just so too very really much more most no not nothing all any some again still got get getting " +
+    "keep kept feel feeling felt like day days today yesterday tonight week weeks time times one two three four five six seven eight nine ten " +
+    "couple few lot lots bit kind sort thing things stuff out up down off over about into than then there their them they he she we you your " +
+    "our us had has have having do did does doing dont didnt cant couldnt wont wasnt isnt what when where why how which who because since " +
+    "after before while also even ever never always now lately last way back").split(" "));
+  function termsOf(s) {
+    const out = new Map();
+    String(s || "").toLowerCase().replace(/[’']/g, "").split(/[^a-z]+/).forEach(w => {
+      if (w.length < 3 || STOP.has(w)) return;
+      const stem = w.length > 4 && w.endsWith("s") && !w.endsWith("ss") ? w.slice(0, -1) : w;
+      if (!STOP.has(stem) && !out.has(stem)) out.set(stem, w);
+    });
+    return out;
+  }
+  function sagaPatterns() {
+    const out = [], now = Date.now(), MONTH = 30 * 864e5;
+    const descents = fadingChapters();
+    const named = descents.filter(c => c.dimmed);
+    const recent = named.filter(c => now - c.at < MONTH);
+    const pool = recent.length >= 3 ? recent : named;
+    const scope = pool === recent && recent.length < named.length ? " in the last 30 days" : "";
+    if (pool.length >= 3) {
+      const counts = new Map(); // stem -> { n, forms }
+      pool.forEach(c => termsOf(c.dimmed).forEach((form, stem) => {
+        const e = counts.get(stem) || { n: 0, forms: new Map() };
+        e.n++; e.forms.set(form, (e.forms.get(form) || 0) + 1); counts.set(stem, e);
+      }));
+      const shadowStems = S.myth && S.myth.shadow ? [...termsOf(S.myth.shadow).keys()] : [];
+      const shadowHits = shadowStems.length ? pool.filter(c => shadowStems.some(t => termsOf(c.dimmed).has(t))).length : 0;
+      const top = [...counts.entries()].filter(([stem, e]) => e.n >= 2 && !shadowStems.includes(stem)).sort((a, b) => b[1].n - a[1].n).slice(0, 3)
+        .map(([, e]) => ({ n: e.n, word: [...e.forms.entries()].sort((a, b) => b[1] - a[1])[0][0] }));
+      if (top.length) {
+        const [first, ...rest] = top;
+        out.push({ kind: "words", html: `<em>“${esc(first.word)}”</em> came up in ${first.n} of ${pool.length} descents${scope}.${rest.length ? ` Also ${rest.map(t => `<em>“${esc(t.word)}”</em> (${t.n})`).join(" and ")}.` : ""}` });
+      }
+      if (shadowHits >= 2) out.push({ kind: "shadow", html: `Your shadow, <em>${esc(S.myth.shadow)}</em>, was named in ${shadowHits} of them.` });
+    }
+    if (descents.length >= 4) {
+      const parts = [["in the morning", h => h >= 5 && h < 12], ["in the afternoon", h => h >= 12 && h < 17], ["in the evening", h => h >= 17 && h < 22], ["late at night", h => h >= 22 || h < 5]];
+      const tally = parts.map(([label, test]) => ({ label, n: descents.filter(c => test(new Date(c.at).getHours())).length })).sort((a, b) => b.n - a.n);
+      if (tally[0].n >= 3 && tally[0].n / descents.length >= 0.4) out.push({ kind: "time", html: `You fade most often ${tally[0].label}: ${tally[0].n} of your ${descents.length} descents.` });
+    }
+    const answered = S.saga.filter(c => c.outcome === "carried" || c.outcome === "not-yet");
+    if (answered.length >= 3) {
+      const kept = answered.filter(c => c.outcome === "carried").length;
+      out.push({ kind: "carry", html: kept
+        ? `${kept} of the ${answered.length} vows you checked on carried.${kept / answered.length < 0.5 ? " Smaller vows tend to carry further." : ""}`
+        : `None of the ${answered.length} vows you checked on have carried yet. Try a smaller one next time: ten minutes, one set, one page.` });
+    }
+    return out;
+  }
 
   function sagaView() {
     wake.off();
@@ -1217,20 +1493,36 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
           ${c.dimmed ? `<span class="dim">Rose from: ${esc(c.dimmed)}</span>` : ""}
           ${c.lit ? `<span class="dim">Burning with: ${esc(c.lit)}</span>` : ""}
           ${c.outcome === "carried" ? `<span class="chip carried">It carried</span>` : c.outcome === "not-yet" ? `<span class="chip">Not yet</span>` : ""}
+          ${c.vow ? `<button class="ghost card-btn" data-card="${c.n}" type="button">Share as image</button>` : ""}
         </div>
       </li>`).join("");
     const carried = S.saga.filter(c => c.outcome === "carried").length;
+    const shows = sagaPatterns();
+    const rateShown = shows.some(p => p.kind === "carry");
     render(`
       <p class="eyebrow">The saga of ${esc(S.myth?.name || "you")}</p>
       <h2>${S.saga.length ? `${S.saga.length} ${S.saga.length === 1 ? "chapter" : "chapters"} so far.` : "No chapters yet."}</h2>
-      <p class="lede">${S.saga.length ? `None of these are failures. Each one is a time you came back or kept the fire going.${carried ? ` ${carried} ${carried === 1 ? "vow has" : "vows have"} carried.` : ""}` : "Each time you hold the ember, a chapter is written here."}</p>
+      <p class="lede">${S.saga.length ? `None of these are failures. Each one is a time you came back or kept the fire going.${carried && !rateShown ? ` ${carried} ${carried === 1 ? "vow has" : "vows have"} carried.` : ""}` : "Each time you hold the ember, a chapter is written here."}</p>
+      ${shows.length ? `
+        <div class="mirror">
+          <p class="eyebrow">What the saga shows</p>
+          <ul>${shows.map(p => `<li>${p.html}</li>`).join("")}</ul>
+          <p class="fine">A mirror, not a score. Knowing what pulls you under is how you see it coming.</p>
+        </div>` : ""}
       ${items ? `<ol class="saga">${items}</ol>` : ""}
       <div class="actions">
         <button class="btn" id="back" type="button">Back to the ember</button>
         <button class="ghost" id="lettersBtn" type="button">Your letters</button>
       </div>
       <p class="fine">${esc(syncNote())}</p>`,
-      el => { el.querySelector("#back").onclick = home; el.querySelector("#lettersBtn").onclick = lettersView; }, "saga");
+      el => {
+        el.querySelector("#back").onclick = home;
+        el.querySelector("#lettersBtn").onclick = lettersView;
+        el.querySelectorAll("[data-card]").forEach(b => b.onclick = () => {
+          const ch = S.saga.find(c => String(c.n) === b.dataset.card);
+          if (ch) cardView(ch, sagaView);
+        });
+      }, "saga");
   }
 
   // ================= letters =================
@@ -1303,7 +1595,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); backgrou
 
   // ================= boot =================
   document.getElementById("homeBtn").onclick = () => { if (view !== "home") home(); };
-  sync.onPulled = () => { if (view === "home" || view === "saga" || view === "letters") ({ home, saga: sagaView, letters: lettersView })[view](); };
+  sync.onPulled = () => { const views = { home, saga: sagaView, letters: lettersView, myth: () => S.myth ? mythView() : home() }; if (views[view]) views[view](); };
   home();
   sync.init();
 })();

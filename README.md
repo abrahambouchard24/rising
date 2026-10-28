@@ -17,6 +17,7 @@ Not a tracker. You open it when your fire is fading (or when it's burning and yo
 |---|---|---|
 | Myth, letters, saga | Synced to your Claude account | Saved on that device |
 | Voice letters | Attach a voice memo file | Record in-app, or attach |
+| Chapter cards (share as image) | Saved through claude.ai | Share sheet, or a download |
 | Home-screen icon, works offline | No | Yes |
 
 Voice clips are always stored on the device that recorded them.
